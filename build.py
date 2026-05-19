@@ -22,6 +22,42 @@ def fmt_pct(val):
         return val
 
 
+def build_gb_location(d):
+    if "gb_region" not in d:
+        return None
+    reg_rows    = [r for r in d["gb_region"]["rows"] if r[0] not in ("(not set)","")]
+    city_rows   = [r for r in d["gb_city"]["rows"] if r[0] not in ("(not set)","")]
+    cr_rows     = [r for r in d["gb_city_region"]["rows"] if r[0] not in ("(not set)","")]
+
+    def region_table():
+        return "".join(
+            "<tr><td><strong>" + r[0] + "</strong></td><td>" + f"{int(r[1]):,}" + "</td><td>" + f"{int(r[2]):,}" + "</td><td>" + fmt_duration(r[3]) + "</td><td>" + fmt_pct(r[4]) + "</td></tr>"
+            for r in reg_rows
+        )
+
+    def city_table():
+        return "".join(
+            "<tr><td>" + r[0] + "</td><td>" + f"{int(r[1]):,}" + "</td><td>" + f"{int(r[2]):,}" + "</td><td>" + fmt_duration(r[3]) + "</td><td>" + fmt_pct(r[4]) + "</td></tr>"
+            for r in city_rows[:50]
+        )
+
+    def city_region_table():
+        return "".join(
+            "<tr><td>" + r[0] + "</td><td>" + r[1] + "</td><td>" + f"{int(r[2]):,}" + "</td><td>" + f"{int(r[3]):,}" + "</td><td>" + fmt_duration(r[4]) + "</td></tr>"
+            for r in cr_rows[:100]
+        )
+
+    return {
+        "region_table":      region_table(),
+        "city_table":        city_table(),
+        "city_region_table": city_region_table(),
+        "reg_labels":        [r[0] for r in reg_rows],
+        "reg_sessions":      [int(r[1]) for r in reg_rows],
+        "city_labels":       [r[0] for r in city_rows[:20]],
+        "city_sessions":     [int(r[1]) for r in city_rows[:20]],
+    }
+
+
 def build_period(d):
     ch = d["channel"]["rows"]
     ts = sum(int(r[1]) for r in ch)
@@ -92,6 +128,7 @@ def build_period(d):
         "st_html":        st_html(),
         "has_age":        bool(age_rows),
         "has_gen":        bool(gen_rows),
+        "gb_location":    build_gb_location(d),
         "data": {
             "eng_dates":    eng_dates,
             "eng_sessions": eng_sessions,
@@ -118,6 +155,28 @@ p_ww6  = build_period(raw["ww_6m"])
 p_ww12 = build_period(raw["ww_12m"])
 p_gb6  = build_period(raw["gb_6m"])
 p_gb12 = build_period(raw["gb_12m"])
+
+
+def gb_location_html(p, pid):
+    loc = p.get("gb_location")
+    if not loc:
+        return ""
+    return (
+        "<div class=\"section-divider\"><span>GB Location Breakdown</span></div>"
+        "<div class=\"grid grid-2\">"
+        "<div class=\"card\"><h2>Sessions by Region</h2><canvas id=\"regChart_" + pid + "\" height=\"160\"></canvas></div>"
+        "<div class=\"card\"><h2>Top 20 Cities</h2><canvas id=\"cityChart_" + pid + "\" height=\"160\"></canvas></div>"
+        "</div>"
+        "<div class=\"card full\"><h2>UK Regions</h2>"
+        "<table><thead><tr><th>Region</th><th>Sessions</th><th>Users</th><th>Avg Duration</th><th>Bounce Rate</th></tr></thead>"
+        "<tbody>" + loc["region_table"] + "</tbody></table></div>"
+        "<div class=\"card full\"><h2>Cities (Top 50)</h2>"
+        "<table><thead><tr><th>City</th><th>Sessions</th><th>Users</th><th>Avg Duration</th><th>Bounce Rate</th></tr></thead>"
+        "<tbody>" + loc["city_table"] + "</tbody></table></div>"
+        "<div class=\"card full\"><h2>City + Region (Top 100)</h2>"
+        "<table><thead><tr><th>City</th><th>Region</th><th>Sessions</th><th>Users</th><th>Avg Duration</th></tr></thead>"
+        "<tbody>" + loc["city_region_table"] + "</tbody></table></div>"
+    )
 
 
 def panel_html(p, pid, active):
@@ -160,15 +219,21 @@ def panel_html(p, pid, active):
         "<tbody>" + p["lp_table"] + "</tbody></table></div>"
         "</div>"
         "<div class=\"card full\"><h2>Site Search Terms</h2>" + p["st_html"] + "</div>"
+        + gb_location_html(p, pid) +
         "</div>"
     )
 
 
 def data_vars(p, pid):
-    d = p["data"]
     lines = []
-    for key, val in d.items():
+    for key, val in p["data"].items():
         lines.append("const " + key + "_" + pid + " = " + json.dumps(val) + ";")
+    loc = p.get("gb_location")
+    if loc:
+        lines.append("const reg_labels_" + pid + " = " + json.dumps(loc["reg_labels"]) + ";")
+        lines.append("const reg_sessions_" + pid + " = " + json.dumps(loc["reg_sessions"]) + ";")
+        lines.append("const city_labels_" + pid + " = " + json.dumps(loc["city_labels"]) + ";")
+        lines.append("const city_sessions_" + pid + " = " + json.dumps(loc["city_sessions"]) + ";")
     return "\n".join(lines)
 
 
@@ -191,6 +256,8 @@ def init_js(pid):
   IC('browserChart_{p}',{type:'bar',data:{labels:br_labels_{p},datasets:[{label:'Sessions',data:br_sessions_{p},backgroundColor:COLORS,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151'},grid:{display:false}}}}});
   if(typeof age_labels_{p}!=='undefined'&&age_labels_{p}.length) IC('ageChart_{p}',{type:'bar',data:{labels:age_labels_{p},datasets:[{label:'Users',data:age_users_{p},backgroundColor:COLORS,borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#374151'},grid:{display:false}},y:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}}}}});
   if(typeof gen_labels_{p}!=='undefined'&&gen_labels_{p}.length) IC('genderChart_{p}',{type:'doughnut',data:{labels:gen_labels_{p},datasets:[{data:gen_users_{p},backgroundColor:['#db2777','#4f46e5','#059669'],borderWidth:0,hoverOffset:4}]},options:{plugins:{legend:{position:'bottom',labels:{color:'#374151',padding:10,font:{size:12}}}}}});
+  if(typeof reg_labels_{p}!=='undefined'&&reg_labels_{p}.length) IC('regChart_{p}',{type:'bar',data:{labels:reg_labels_{p},datasets:[{label:'Sessions',data:reg_sessions_{p},backgroundColor:COLORS,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151'},grid:{display:false}}}}});
+  if(typeof city_labels_{p}!=='undefined'&&city_labels_{p}.length) IC('cityChart_{p}',{type:'bar',data:{labels:city_labels_{p},datasets:[{label:'Sessions',data:city_sessions_{p},backgroundColor:COLORS,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151'},grid:{display:false}}}}});
 """.replace("{p}", pid)
 
 
@@ -246,6 +313,8 @@ html = """<!DOCTYPE html>
   .badge-organicsocial{background:#f0f9ff;color:#0284c7}
   .badge-unassigned{background:#f9fafb;color:#9ca3af}
   .note{font-size:12px;color:#9ca3af;font-style:italic}
+  .section-divider{display:flex;align-items:center;gap:12px;margin:28px 0 16px;color:#6b7280;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:#e5e7eb}
   @media(max-width:900px){.grid-2,.grid-3,.grid-wide{grid-template-columns:1fr}.container{padding:16px}.header{padding:16px 20px}.sub-bar{padding:10px 16px}}
 </style>
 </head>

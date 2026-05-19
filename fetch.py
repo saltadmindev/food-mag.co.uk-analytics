@@ -48,7 +48,7 @@ def fetch_range(date_range, engagement_limit, country_filter=None):
         except Exception as e:
             return {"headers": dimensions + metrics, "rows": [], "error": str(e)}
 
-    return {
+    base = {
         "geo_country":   report(["country"],                   ["sessions", "activeUsers", "averageSessionDuration"], order_metric="sessions"),
         "geo_city":      report(["city", "country"],            ["sessions", "activeUsers"], order_metric="sessions"),
         "age":           report(["userAgeBracket"],             ["activeUsers", "sessions"], order_metric="activeUsers"),
@@ -62,6 +62,11 @@ def fetch_range(date_range, engagement_limit, country_filter=None):
         "search_terms":  report(["searchTerm"],                 ["sessions", "activeUsers"], order_metric="sessions"),
         "engagement":    report(["date"],                       ["activeUsers", "sessions", "averageSessionDuration", "engagementRate"], limit=engagement_limit, order_metric="sessions"),
     }
+    if country_filter:
+        base["gb_region"]    = report(["region"],               ["sessions", "activeUsers", "averageSessionDuration", "bounceRate"], limit=50, order_metric="sessions")
+        base["gb_city"]      = report(["city"],                 ["sessions", "activeUsers", "averageSessionDuration", "bounceRate"], limit=100, order_metric="sessions")
+        base["gb_city_region"] = report(["city", "region"],     ["sessions", "activeUsers", "averageSessionDuration"], limit=100, order_metric="sessions")
+    return base
 
 
 print("Fetching worldwide 6-month...")
