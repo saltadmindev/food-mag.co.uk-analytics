@@ -22,12 +22,93 @@ def fmt_pct(val):
         return val
 
 
+CITY_COORDS = {
+    "London":[51.5074,-0.1278],"Birmingham":[52.4862,-1.8904],"Manchester":[53.4808,-2.2426],
+    "Leeds":[53.8008,-1.5491],"Sheffield":[53.3811,-1.4701],"Bristol":[51.4545,-2.5879],
+    "Liverpool":[53.4084,-2.9916],"Plymouth":[50.3755,-4.1427],"Edinburgh":[55.9533,-3.1883],
+    "Glasgow":[55.8642,-4.2518],"Cardiff":[51.4816,-3.1791],"Belfast":[54.5973,-5.9301],
+    "Nottingham":[52.9548,-1.1581],"Leicester":[52.6369,-1.1398],"Coventry":[52.4068,-1.5197],
+    "Bradford":[53.796,-1.7594],"Stoke-on-Trent":[53.0027,-2.1794],"Wolverhampton":[52.5862,-2.1265],
+    "Derby":[52.9225,-1.4746],"Southampton":[50.9097,-1.4044],"Portsmouth":[50.8198,-1.088],
+    "Oxford":[51.752,-1.2577],"Cambridge":[52.2053,0.1218],"Norwich":[52.6309,1.2974],
+    "Exeter":[50.7236,-3.5275],"Bath":[51.3758,-2.3599],"York":[53.9591,-1.0815],
+    "Hull":[53.7676,-0.3274],"Kingston upon Hull":[53.7676,-0.3274],
+    "Sunderland":[54.9069,-1.3838],"Newcastle upon Tyne":[54.9783,-1.6178],"Newcastle":[54.9783,-1.6178],
+    "Aberdeen":[57.1497,-2.0943],"Dundee":[56.462,-2.9707],"Swansea":[51.6214,-3.9436],
+    "Brighton":[50.8225,-0.1372],"Brighton and Hove":[50.8225,-0.1372],
+    "Bournemouth":[50.7192,-1.8808],"Reading":[51.4543,-0.9781],"Luton":[51.8787,-0.42],
+    "Northampton":[52.2405,-0.9027],"Milton Keynes":[52.0406,-0.7594],"Peterborough":[52.5695,-0.2405],
+    "Ipswich":[52.0567,1.1482],"Gloucester":[51.8642,-2.2382],"Blackpool":[53.8175,-3.0357],
+    "Middlesbrough":[54.5742,-1.235],"Huddersfield":[53.6458,-1.7853],"Wigan":[53.5454,-2.6322],
+    "Stockport":[53.4083,-2.1494],"Telford":[52.6766,-2.4469],"Doncaster":[53.5228,-1.1286],
+    "Barnsley":[53.5526,-1.4797],"Wakefield":[53.683,-1.4977],"Rotherham":[53.43,-1.3563],
+    "Salford":[53.4875,-2.2901],"Bolton":[53.5779,-2.4282],"Oldham":[53.54,-2.1183],
+    "Rochdale":[53.6156,-2.1553],"Blackburn":[53.7481,-2.4847],"Preston":[53.7632,-2.7031],
+    "Chester":[53.1905,-2.891],"Warrington":[53.39,-2.597],"Guildford":[51.2362,-0.5704],
+    "Chelmsford":[51.7356,0.4685],"Colchester":[51.8957,0.8919],"Shrewsbury":[52.7075,-2.754],
+    "Worcester":[52.192,-2.22],"Hereford":[52.0565,-2.716],"Carlisle":[54.8951,-2.9382],
+    "Lancaster":[54.0466,-2.8007],"Durham":[54.7761,-1.5733],"Inverness":[57.4778,-4.2247],
+    "Perth":[56.3958,-3.4311],"Stirling":[56.1165,-3.9369],"Newport":[51.5842,-2.9977],
+    "Wrexham":[53.047,-2.9924],"Derry":[54.9966,-7.3086],"Londonderry":[54.9966,-7.3086],
+    "Lisburn":[54.5162,-6.058],"Cheltenham":[51.8994,-2.0783],"Swindon":[51.5558,-1.7797],
+    "Slough":[51.5105,-0.595],"Watford":[51.6565,-0.3969],"Basildon":[51.577,0.49],
+    "Southend-on-Sea":[51.5461,0.7077],"Worthing":[50.812,-0.372],"Crawley":[51.1091,-0.1872],
+    "Eastbourne":[50.7692,0.2799],"Hastings":[50.8549,0.5714],"Canterbury":[51.2802,1.0789],
+    "Maidstone":[51.272,0.529],"Medway":[51.3898,0.543],"Aldershot":[51.248,-0.7616],
+    "Basingstoke":[51.2665,-1.0875],"Salisbury":[51.0688,-1.7945],"Weston-super-Mare":[51.3462,-2.9776],
+    "Taunton":[51.0158,-3.0973],"Torquay":[50.4619,-3.5253],"Truro":[50.2632,-5.051],
+    "Newquay":[50.413,-5.0757],"Aylesbury":[51.814,-0.8078],"High Wycombe":[51.6288,-0.7478],
+    "Banbury":[52.0629,-1.3398],"Dundee":[56.462,-2.9707],"Kilmarnock":[55.6111,-4.4961],
+    "Ayr":[55.4595,-4.629],"Paisley":[55.8459,-4.423],"Motherwell":[55.7861,-3.9898],
+    "Dunfermline":[56.0719,-3.4536],"Falkirk":[56.0019,-3.7839],"Kirkcaldy":[56.1107,-3.1628],
+    "Barry":[51.4051,-3.284],"Bridgend":[51.5048,-3.5772],"Neath":[51.6614,-3.8069],
+    "Llanelli":[51.684,-4.1632],"Carmarthen":[51.8579,-4.312],"Merthyr Tydfil":[51.7462,-3.3783],
+    "Newry":[54.1762,-6.3451],"Antrim":[54.7195,-6.2036],"Ballymena":[54.8631,-6.2764],
+    "Coleraine":[55.133,-6.668],"Omagh":[54.5976,-7.3038],"Enniskillen":[54.3449,-7.6351],
+    "Bury St Edmunds":[52.2437,0.7152],"St Albans":[51.7454,-0.3366],"Stevenage":[51.9017,-0.2046],
+    "Harlow":[51.7754,0.1003],"Bedford":[52.1356,-0.4666],"Dunstable":[51.886,-0.5218],
+    "Lowestoft":[52.48,1.75],"Great Yarmouth":[52.6075,1.7291],"Wokingham":[51.4113,-0.8348],
+    "Bracknell":[51.4162,-0.7478],"Windsor":[51.4839,-0.6044],"Maidenhead":[51.5221,-0.7228],
+    "Hemel Hempstead":[51.7526,-0.4427],"Hitchin":[51.9463,-0.2799],"Trowbridge":[51.3199,-2.2085],
+    "Yeovil":[50.9421,-2.6364],"Bridgwater":[51.128,-3.0003],"Crediton":[50.7908,-3.6524],
+    "Tavistock":[50.5482,-4.1448],"Exmouth":[50.6214,-3.4136],"Newton Abbot":[50.5268,-3.6066],
+    "Brixham":[50.3975,-3.5148],"Honiton":[50.7987,-3.1883],"Sidmouth":[50.6832,-3.2395],
+    "Cirencester":[51.7219,-1.9674],"Stroud":[51.7458,-2.218],"Chippenham":[51.4584,-2.1196],
+    "Frome":[51.2303,-2.3223],"Wisbech":[52.663,0.1595],"Huntingdon":[52.3319,-0.18],
+    "St Neots":[52.2296,-0.277],"Newmarket":[52.2439,0.4078],"Haverhill":[52.0845,0.44],
+    "Letchworth":[51.9779,-0.2283],"Welwyn Garden City":[51.7981,-0.1895],"Hatfield":[51.7632,-0.2285],
+    "Bicester":[51.9001,-1.1531],"Witney":[51.7843,-1.4863],"Abingdon":[51.6708,-1.282],
+    "Winchester":[51.0632,-1.3077],"Andover":[51.2082,-1.4822],"Newbury":[51.4013,-1.3221],
+    "Farnham":[51.2146,-0.7985],"Woking":[51.3188,-0.5564],"Guildford":[51.2362,-0.5704],
+    "Aberdeen":[57.1497,-2.0943],"Fort William":[56.8198,-5.106],"Oban":[56.4117,-5.472],
+    "Dumfries":[55.0713,-3.605],"Hamilton":[55.777,-4.0388],"Livingston":[55.8894,-3.5223],
+    "Aberystwyth":[52.4153,-4.0829],"Llandudno":[53.3236,-3.8272],"Rhyl":[53.3197,-3.4893],
+    "Colwyn Bay":[53.2934,-3.726],"Pontypridd":[51.5968,-3.3432],"Caerphilly":[51.5788,-3.2189],
+    "Cwmbran":[51.6539,-3.0228]
+}
+
+
 def build_gb_location(d):
     if "gb_region" not in d:
         return None
     reg_rows    = [r for r in d["gb_region"]["rows"] if r[0] not in ("(not set)","")]
     city_rows   = [r for r in d["gb_city"]["rows"] if r[0] not in ("(not set)","")]
     cr_rows     = [r for r in d["gb_city_region"]["rows"] if r[0] not in ("(not set)","")]
+
+    city_map_data = []
+    for r in city_rows:
+        name = r[0]
+        coords = CITY_COORDS.get(name)
+        if coords:
+            city_map_data.append({
+                "name": name,
+                "lat": coords[0],
+                "lng": coords[1],
+                "sessions": int(r[1]),
+                "users": int(r[2]),
+                "duration": fmt_duration(r[3]),
+                "bounce": fmt_pct(r[4]),
+            })
 
     def region_table():
         return "".join(
@@ -55,6 +136,7 @@ def build_gb_location(d):
         "reg_sessions":      [int(r[1]) for r in reg_rows],
         "city_labels":       [r[0] for r in city_rows[:20]],
         "city_sessions":     [int(r[1]) for r in city_rows[:20]],
+        "city_map_data":     city_map_data,
     }
 
 
@@ -163,6 +245,10 @@ def gb_location_html(p, pid):
         return ""
     return (
         "<div class=\"section-divider\"><span>GB Location Breakdown</span></div>"
+        "<div class=\"card full map-card\"><h2>Interactive Map — Sessions by Location</h2>"
+        "<div id=\"gbMap_" + pid + "\" class=\"gb-map\"></div>"
+        "<div class=\"map-legend\" id=\"legend_" + pid + "\"></div>"
+        "</div>"
         "<div class=\"grid grid-2\">"
         "<div class=\"card\"><h2>Sessions by Region</h2><canvas id=\"regChart_" + pid + "\" height=\"160\"></canvas></div>"
         "<div class=\"card\"><h2>Top 20 Cities</h2><canvas id=\"cityChart_" + pid + "\" height=\"160\"></canvas></div>"
@@ -234,6 +320,7 @@ def data_vars(p, pid):
         lines.append("const reg_sessions_" + pid + " = " + json.dumps(loc["reg_sessions"]) + ";")
         lines.append("const city_labels_" + pid + " = " + json.dumps(loc["city_labels"]) + ";")
         lines.append("const city_sessions_" + pid + " = " + json.dumps(loc["city_sessions"]) + ";")
+        lines.append("const city_map_data_" + pid + " = " + json.dumps(loc["city_map_data"]) + ";")
     return "\n".join(lines)
 
 
@@ -258,6 +345,7 @@ def init_js(pid):
   if(typeof gen_labels_{p}!=='undefined'&&gen_labels_{p}.length) IC('genderChart_{p}',{type:'doughnut',data:{labels:gen_labels_{p},datasets:[{data:gen_users_{p},backgroundColor:['#db2777','#4f46e5','#059669'],borderWidth:0,hoverOffset:4}]},options:{plugins:{legend:{position:'bottom',labels:{color:'#374151',padding:10,font:{size:12}}}}}});
   if(typeof reg_labels_{p}!=='undefined'&&reg_labels_{p}.length) IC('regChart_{p}',{type:'bar',data:{labels:reg_labels_{p},datasets:[{label:'Sessions',data:reg_sessions_{p},backgroundColor:COLORS,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151'},grid:{display:false}}}}});
   if(typeof city_labels_{p}!=='undefined'&&city_labels_{p}.length) IC('cityChart_{p}',{type:'bar',data:{labels:city_labels_{p},datasets:[{label:'Sessions',data:city_sessions_{p},backgroundColor:COLORS,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151'},grid:{display:false}}}}});
+  if(typeof city_map_data_{p}!=='undefined') initGBMap('{p}', city_map_data_{p});
 """.replace("{p}", pid)
 
 
@@ -268,6 +356,8 @@ html = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GA4 Dashboard — food-mag.co.uk</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f9fafb;color:#111827;min-height:100vh}
@@ -315,6 +405,16 @@ html = """<!DOCTYPE html>
   .note{font-size:12px;color:#9ca3af;font-style:italic}
   .section-divider{display:flex;align-items:center;gap:12px;margin:28px 0 16px;color:#6b7280;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
   .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:#e5e7eb}
+  .gb-map{height:580px;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb}
+  .map-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:12px;color:#6b7280;align-items:center}
+  .map-legend-item{display:flex;align-items:center;gap:6px}
+  .map-legend-dot{border-radius:50%;display:inline-block}
+  .leaflet-popup-content-wrapper{border-radius:8px!important;box-shadow:0 4px 16px rgba(0,0,0,0.12)!important;border:1px solid #e5e7eb!important}
+  .leaflet-popup-content{margin:12px 16px!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;font-size:13px!important}
+  .map-popup-title{font-weight:700;font-size:14px;color:#111827;margin-bottom:8px}
+  .map-popup-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+  .map-popup-label{color:#9ca3af;font-size:11px;text-transform:uppercase;letter-spacing:0.04em}
+  .map-popup-val{color:#111827;font-weight:600}
   @media(max-width:900px){.grid-2,.grid-3,.grid-wide{grid-template-columns:1fr}.container{padding:16px}.header{padding:16px 20px}.sub-bar{padding:10px 16px}}
 </style>
 </head>
@@ -381,6 +481,122 @@ function switchPanel(id, btn, section) {
 }
 
 window.addEventListener('DOMContentLoaded', initww_6m);
+
+const _maps = {};
+function initGBMap(pid, cityData) {
+  if (_maps[pid]) return;
+  const el = document.getElementById('gbMap_' + pid);
+  if (!el) return;
+
+  const map = L.map('gbMap_' + pid, {zoomControl:true, scrollWheelZoom:false}).setView([54.4, -3.2], 6);
+  _maps[pid] = map;
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    maxZoom:13
+  }).addTo(map);
+
+  // UK county + country boundaries from ONS/martinjc
+  const boundaryUrls = [
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/eng/topo_cty.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/sco/topo_lad.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/wls/topo_lad.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/nir/topo_lgd.json'
+  ];
+
+  boundaryUrls.forEach(url => {
+    fetch(url)
+      .then(r => r.json())
+      .then(topo => {
+        // Convert TopoJSON to GeoJSON
+        const objKey = Object.keys(topo.objects)[0];
+        const features = [];
+        const obj = topo.objects[objKey];
+        obj.geometries.forEach(geom => {
+          features.push(convertTopo(topo, geom));
+        });
+        const gj = {type:'FeatureCollection', features: features.filter(Boolean)};
+        L.geoJSON(gj, {
+          style: {color:'#6366f1', weight:0.8, fillColor:'#eef2ff', fillOpacity:0.3, opacity:0.6}
+        }).addTo(map);
+      }).catch(()=>{});
+  });
+
+  // Simple TopoJSON geometry converter (arcs → coordinates)
+  function convertTopo(topo, geom) {
+    try {
+      const scale = topo.transform ? topo.transform.scale : [1,1];
+      const translate = topo.transform ? topo.transform.translate : [0,0];
+      function decodeArc(arc) {
+        let x=0, y=0;
+        return arc.map(([dx,dy]) => { x+=dx; y+=dy; return [x*scale[0]+translate[0], y*scale[1]+translate[1]]; });
+      }
+      function arcToCoords(arcIdx) {
+        const reversed = arcIdx < 0;
+        const pts = decodeArc(topo.arcs[reversed ? ~arcIdx : arcIdx]);
+        return reversed ? pts.slice().reverse() : pts;
+      }
+      function ringCoords(ring) { return ring.flatMap(arcToCoords); }
+
+      let coords;
+      if (geom.type === 'Polygon') {
+        coords = geom.arcs.map(ring => ringCoords(ring).map(([lng,lat]) => [lat,lng]));
+        return {type:'Feature', properties: geom.properties||{}, geometry:{type:'Polygon', coordinates: geom.arcs.map(ring => ringCoords(ring))}};
+      } else if (geom.type === 'MultiPolygon') {
+        return {type:'Feature', properties: geom.properties||{}, geometry:{type:'MultiPolygon', coordinates: geom.arcs.map(poly => poly.map(ring => ringCoords(ring)))}};
+      }
+    } catch(e) {}
+    return null;
+  }
+
+  // Bubble markers sized by sessions
+  const maxSessions = Math.max(...cityData.map(c => c.sessions));
+  const breaks = [
+    {min:0, label:'< 500', color:'#c7d2fe', r:5},
+    {min:500, label:'500–1k', color:'#818cf8', r:8},
+    {min:1000, label:'1k–5k', color:'#6366f1', r:12},
+    {min:5000, label:'5k–10k', color:'#4338ca', r:18},
+    {min:10000, label:'10k+', color:'#312e81', r:24},
+  ];
+
+  function getStyle(sessions) {
+    for (let i = breaks.length-1; i >= 0; i--) {
+      if (sessions >= breaks[i].min) return breaks[i];
+    }
+    return breaks[0];
+  }
+
+  cityData.forEach(city => {
+    const style = getStyle(city.sessions);
+    L.circleMarker([city.lat, city.lng], {
+      radius: style.r,
+      fillColor: style.color,
+      color: '#fff',
+      weight: 1.5,
+      fillOpacity: 0.85
+    }).bindPopup(
+      '<div class="map-popup-title">' + city.name + '</div>' +
+      '<div class="map-popup-grid">' +
+      '<div class="map-popup-label">Sessions</div><div class="map-popup-val">' + city.sessions.toLocaleString() + '</div>' +
+      '<div class="map-popup-label">Users</div><div class="map-popup-val">' + city.users.toLocaleString() + '</div>' +
+      '<div class="map-popup-label">Avg Duration</div><div class="map-popup-val">' + city.duration + '</div>' +
+      '<div class="map-popup-label">Bounce Rate</div><div class="map-popup-val">' + city.bounce + '</div>' +
+      '</div>',
+      {maxWidth:220}
+    ).addTo(map);
+  });
+
+  // Legend
+  const leg = document.getElementById('legend_' + pid);
+  if (leg) {
+    leg.innerHTML = '<span style="color:#374151;font-weight:600;margin-right:4px">Sessions:</span>' +
+      breaks.map(b =>
+        '<span class="map-legend-item"><span class="map-legend-dot" style="width:' + (b.r*2) + 'px;height:' + (b.r*2) + 'px;background:' + b.color + '"></span>' + b.label + '</span>'
+      ).join('');
+  }
+
+  setTimeout(() => map.invalidateSize(), 100);
+}
 </script>
 </body>
 </html>"""
