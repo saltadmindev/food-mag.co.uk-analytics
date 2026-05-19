@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GA4 Analytics Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+  .header { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); padding: 32px 40px; border-bottom: 1px solid #2d2d4e; }
+  .header h1 { font-size: 28px; font-weight: 700; color: #fff; }
+  .header p { color: #a5b4fc; margin-top: 4px; font-size: 14px; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 32px 40px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .stat { background: #1e2030; border: 1px solid #2d2d4e; border-radius: 12px; padding: 20px; }
+  .stat-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-size: 32px; font-weight: 700; color: #fff; margin-top: 4px; }
+  .stat-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  .grid { display: grid; gap: 24px; margin-bottom: 24px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .grid-wide { grid-template-columns: 2fr 1fr; }
+  .card { background: #1e2030; border: 1px solid #2d2d4e; border-radius: 12px; padding: 24px; }
+  .card h2 { font-size: 15px; font-weight: 600; color: #c7d2fe; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .card h2::before { content: ""; display: block; width: 3px; height: 16px; background: #6366f1; border-radius: 2px; }
+  .chart-wrap { position: relative; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 12px; color: #64748b; font-weight: 500; border-bottom: 1px solid #2d2d4e; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 10px 12px; border-bottom: 1px solid #1a1a2e; color: #cbd5e1; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #252840; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-direct { background: #1e3a5f; color: #60a5fa; }
+  .badge-organic { background: #14302a; color: #34d399; }
+  .badge-referral { background: #2d1b4e; color: #a78bfa; }
+  .badge-email { background: #3b2000; color: #fbbf24; }
+  .badge-paid { background: #3b0000; color: #f87171; }
+  .note { font-size: 12px; color: #475569; margin-top: 16px; font-style: italic; }
+  @media (max-width: 900px) { .grid-2, .grid-3, .grid-wide { grid-template-columns: 1fr; } .container { padding: 20px; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>GA4 Analytics Dashboard</h1>
+  <p>Last 30 days &nbsp;·&nbsp; Generated 19 May 2026, 16:09 &nbsp;·&nbsp; Property 275227762</p>
+</div>
+<div class="container">
+
+  <!-- Summary stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Total Sessions</div>
+      <div class="stat-value">73,987</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Active Users</div>
+      <div class="stat-value">67,085</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Avg Session Duration</div>
+      <div class="stat-value">1.5m</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Top Country</div>
+      <div class="stat-value" style="font-size:20px">Germany</div>
+      <div class="stat-sub">36,593 sessions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Top Channel</div>
+      <div class="stat-value" style="font-size:18px">Direct</div>
+      <div class="stat-sub">53,185 sessions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Top Device</div>
+      <div class="stat-value" style="font-size:20px">Desktop</div>
+      <div class="stat-sub">57,249 sessions</div>
+    </div>
+  </div>
+
+  <!-- Engagement trend -->
+  <div class="grid" style="margin-bottom:24px;">
+    <div class="card">
+      <h2>Sessions &amp; Users Over Time</h2>
+      <div class="chart-wrap"><canvas id="trendChart" height="80"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Channels + Geo -->
+  <div class="grid grid-wide">
+    <div class="card">
+      <h2>Sessions by Country</h2>
+      <div class="chart-wrap"><canvas id="geoChart" height="120"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Traffic Channels</h2>
+      <div class="chart-wrap"><canvas id="channelChart" height="120"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Device + OS + Browser -->
+  <div class="grid grid-3" style="margin-top:24px;">
+    <div class="card">
+      <h2>Device Type</h2>
+      <div class="chart-wrap"><canvas id="deviceChart" height="180"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Operating System</h2>
+      <div class="chart-wrap"><canvas id="osChart" height="180"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Browser</h2>
+      <div class="chart-wrap"><canvas id="browserChart" height="180"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Age + Gender -->
+  <div class="grid grid-2" style="margin-top:24px;">
+    <div class="card">
+      <h2>Age Bracket</h2>
+      <div class='chart-wrap'><canvas id='ageChart' height='160'></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Gender</h2>
+      <div class='chart-wrap'><canvas id='genderChart' height='160'></canvas></div>
+    </div>
+  </div>
+
+  <!-- Channel table -->
+  <div class="grid" style="margin-top:24px;">
+    <div class="card">
+      <h2>Channel Performance</h2>
+      <table>
+        <thead><tr><th>Channel</th><th>Sessions</th><th>Users</th><th>Bounce Rate</th><th>Avg Duration</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-direct">Direct</span></td><td>56,570</td><td>53,185</td><td>88.0%</td><td>1.1m</td></tr><tr><td><span class="badge badge-organicsearch">Organic Search</span></td><td>15,050</td><td>11,993</td><td>43.9%</td><td>2.7m</td></tr><tr><td><span class="badge badge-referral">Referral</span></td><td>1,688</td><td>1,282</td><td>15.0%</td><td>2.5m</td></tr><tr><td><span class="badge badge-organicsocial">Organic Social</span></td><td>296</td><td>279</td><td>28.0%</td><td>2.0m</td></tr><tr><td><span class="badge badge-email">Email</span></td><td>230</td><td>222</td><td>81.7%</td><td>16s</td></tr><tr><td><span class="badge badge-unassigned">Unassigned</span></td><td>152</td><td>123</td><td>52.6%</td><td>1.9m</td></tr><tr><td><span class="badge badge-organicshopping">Organic Shopping</span></td><td>1</td><td>1</td><td>100.0%</td><td>0s</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sources + Landing pages -->
+  <div class="grid grid-2" style="margin-top:24px;">
+    <div class="card">
+      <h2>Traffic Sources</h2>
+      <table>
+        <thead><tr><th>Source</th><th>Medium</th><th>Sessions</th><th>Users</th></tr></thead>
+        <tbody>
+          <tr><td>(direct)</td><td>(none)</td><td>56,570</td><td>53,185</td></tr><tr><td>google</td><td>organic</td><td>13,860</td><td>11,154</td></tr><tr><td>loquax.co.uk</td><td>referral</td><td>681</td><td>478</td></tr><tr><td>bing</td><td>organic</td><td>465</td><td>395</td></tr><tr><td>duckduckgo</td><td>organic</td><td>311</td><td>250</td></tr><tr><td>simplyprizes.com</td><td>referral</td><td>233</td><td>211</td></tr><tr><td>revinate</td><td>email</td><td>216</td><td>217</td></tr><tr><td>uk.search.yahoo.com</td><td>referral</td><td>185</td><td>125</td></tr><tr><td>rosemaryandporkbelly.co.uk</td><td>referral</td><td>135</td><td>84</td></tr><tr><td>competitionstoday.co.uk</td><td>referral</td><td>116</td><td>109</td></tr><tr><td>ecosia.org</td><td>organic</td><td>116</td><td>93</td></tr><tr><td>facebook.com</td><td>referral</td><td>105</td><td>101</td></tr><tr><td>competitorscompanion.com</td><td>referral</td><td>101</td><td>82</td></tr><tr><td>forums.moneysavingexpert.com</td><td>referral</td><td>71</td><td>70</td></tr><tr><td>www.go-devon.com</td><td>newsletter</td><td>70</td><td>66</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Top Landing Pages</h2>
+      <table>
+        <thead><tr><th>Page</th><th>Sessions</th><th>Bounce</th><th>Duration</th></tr></thead>
+        <tbody>
+          <tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/good-stuff/features/spring-breaks">/good-stuff/features/spring-breaks</td><td>5,363</td><td>82.5%</td><td>25s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/">/</td><td>4,787</td><td>79.2%</td><td>1.5m</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/contact-us/media-kit">/contact-us/media-kit</td><td>1,931</td><td>97.2%</td><td>2s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/food-lifestyle-stockists">/food-lifestyle-stockists</td><td>1,899</td><td>98.1%</td><td>3s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/about/terms-conditions">/about/terms-conditions</td><td>1,896</td><td>98.6%</td><td>1s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/about/meet-the-team">/about/meet-the-team</td><td>1,892</td><td>97.1%</td><td>4s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/contact-us">/contact-us</td><td>1,888</td><td>98.1%</td><td>2s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/newsletter">/newsletter</td><td>1,878</td><td>98.1%</td><td>1s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/recipes">/recipes</td><td>1,878</td><td>99.1%</td><td>2s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/privacy-policy">/privacy-policy</td><td>1,876</td><td>98.7%</td><td>1s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/cookie-policy-uk">/cookie-policy-uk</td><td>1,874</td><td>98.5%</td><td>1s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/my-account/edit-account">/my-account/edit-account</td><td>1,860</td><td>99.0%</td><td>0s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/recipe-courses/barbecue">/recipe-courses/barbecue</td><td>1,854</td><td>98.2%</td><td>3s</td></tr><tr><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="/recipe-courses/mains">/recipe-courses/mains</td><td>1,854</td><td>99.2%</td><td>0s</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Search terms -->
+  <div class="grid" style="margin-top:24px;">
+    <div class="card">
+      <h2>Site Search Terms</h2>
+      <table><thead><tr><th>Search Term</th><th>Sessions</th></tr></thead><tbody><tr><td>bath</td><td>4</td></tr><tr><td>scott paton</td><td>3</td></tr><tr><td>barnstaple</td><td>2</td></tr><tr><td>win</td><td>2</td></tr><tr><td>CASINO</td><td>1</td></tr><tr><td>Cold smoking</td><td>1</td></tr><tr><td>Insiders guide Wells</td><td>1</td></tr><tr><td>Wells</td><td>1</td></tr><tr><td>ache</td><td>1</td></tr><tr><td>banana</td><td>1</td></tr><tr><td>barley sheaf</td><td>1</td></tr><tr><td>barnstable</td><td>1</td></tr><tr><td>bude</td><td>1</td></tr><tr><td>competitions</td><td>1</td></tr></tbody></table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981", "#3b82f6", "#ef4444", "#14b8a6", "#f97316", "#a855f7"];
+
+// Trend chart
+new Chart(document.getElementById("trendChart"), {
+  type: "line",
+  data: {
+    labels: ["19/04/2026", "20/04/2026", "21/04/2026", "22/04/2026", "23/04/2026", "24/04/2026", "25/04/2026", "26/04/2026", "27/04/2026", "28/04/2026", "29/04/2026", "30/04/2026", "01/05/2026", "02/05/2026", "03/05/2026", "04/05/2026", "05/05/2026", "06/05/2026", "07/05/2026", "08/05/2026", "09/05/2026", "10/05/2026", "11/05/2026", "12/05/2026", "13/05/2026", "14/05/2026", "15/05/2026", "16/05/2026", "17/05/2026", "18/05/2026"],
+    datasets: [
+      { label: "Sessions", data: [2776, 2695, 2734, 2720, 2615, 3182, 2522, 2632, 2505, 2255, 2366, 2366, 3411, 2740, 2730, 2066, 2539, 1936, 1868, 2656, 2379, 2406, 2088, 1989, 2057, 2080, 2317, 2222, 2234, 2123], borderColor: "#6366f1", backgroundColor: "rgba(99,102,241,0.1)", fill: true, tension: 0.3, pointRadius: 2 },
+      { label: "Users", data: [2630, 2522, 2547, 2539, 2471, 2901, 2364, 2478, 2366, 2146, 2228, 2250, 3232, 2558, 2550, 1964, 2405, 1840, 1763, 2492, 2252, 2259, 1983, 1834, 1952, 1979, 2168, 2112, 2107, 1985], borderColor: "#10b981", backgroundColor: "rgba(16,185,129,0.1)", fill: true, tension: 0.3, pointRadius: 2 }
+    ]
+  },
+  options: { plugins: { legend: { labels: { color: "#94a3b8" } } }, scales: { x: { ticks: { color: "#64748b", maxTicksLimit: 10 }, grid: { color: "#1e2a3a" } }, y: { ticks: { color: "#64748b" }, grid: { color: "#1e2a3a" } } } }
+});
+
+// Geo chart
+new Chart(document.getElementById("geoChart"), {
+  type: "bar",
+  data: {
+    labels: ["Germany", "United Kingdom", "Norway", "Singapore", "United States", "Bulgaria", "Australia", "Ireland", "France", "Spain"],
+    datasets: [{ label: "Sessions", data: [36567, 19250, 10052, 2696, 2426, 294, 293, 181, 172, 139], backgroundColor: COLORS, borderRadius: 4 }]
+  },
+  options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { ticks: { color: "#64748b" }, grid: { color: "#1e2a3a" } }, y: { ticks: { color: "#94a3b8" } }, grid: { display: false } } }
+});
+
+// Channel doughnut
+new Chart(document.getElementById("channelChart"), {
+  type: "doughnut",
+  data: {
+    labels: ["Direct", "Organic Search", "Referral", "Organic Social", "Email", "Unassigned", "Organic Shopping"],
+    datasets: [{ data: [56570, 15050, 1688, 296, 230, 152, 1], backgroundColor: COLORS, borderWidth: 0, hoverOffset: 6 }]
+  },
+  options: { plugins: { legend: { position: "right", labels: { color: "#94a3b8", padding: 12, font: { size: 12 } } } } }
+});
+
+// Device doughnut
+new Chart(document.getElementById("deviceChart"), {
+  type: "doughnut",
+  data: {
+    labels: ["Desktop", "Mobile", "Tablet", "Smart tv"],
+    datasets: [{ data: [60016, 13020, 660, 1], backgroundColor: ["#6366f1","#10b981","#f59e0b"], borderWidth: 0, hoverOffset: 4 }]
+  },
+  options: { plugins: { legend: { position: "bottom", labels: { color: "#94a3b8", padding: 10, font: { size: 12 } } } } }
+});
+
+// OS bar
+new Chart(document.getElementById("osChart"), {
+  type: "bar",
+  data: {
+    labels: ["Windows", "Linux", "iOS", "Android", "Macintosh", "Chrome OS", "(not set)", ""],
+    datasets: [{ label: "Sessions", data: [44976, 14600, 8858, 4726, 3997, 223, 98, 2], backgroundColor: COLORS, borderRadius: 4 }]
+  },
+  options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { ticks: { color: "#64748b" }, grid: { color: "#1e2a3a" } }, y: { ticks: { color: "#94a3b8" }, grid: { display: false } } } }
+});
+
+// Browser bar
+new Chart(document.getElementById("browserChart"), {
+  type: "bar",
+  data: {
+    labels: ["Chrome", "Safari", "Edge", "Samsung Internet", "Firefox", "(not set)", "Safari (in-app)", "Android Webview"],
+    datasets: [{ label: "Sessions", data: [60011, 10394, 1562, 724, 266, 101, 61, 58], backgroundColor: COLORS, borderRadius: 4 }]
+  },
+  options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { ticks: { color: "#64748b" }, grid: { color: "#1e2a3a" } }, y: { ticks: { color: "#94a3b8" }, grid: { display: false } } } }
+});
+
+// Age chart
+new Chart(document.getElementById('ageChart'), { type: 'bar', data: { labels: ["25-34", "35-44", "45-54", "55-64", "65+", "18-24"], datasets: [{ label: 'Users', data: [474, 274, 268, 252, 226, 144], backgroundColor: COLORS, borderRadius: 4 }] }, options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8' }, grid: { display: false } }, y: { ticks: { color: '#64748b' }, grid: { color: '#1e2a3a' } } } } });
+
+// Gender chart
+new Chart(document.getElementById('genderChart'), { type: 'doughnut', data: { labels: ["Female", "Male"], datasets: [{ data: [1098, 602], backgroundColor: ['#ec4899','#6366f1','#10b981'], borderWidth: 0, hoverOffset: 4 }] }, options: { plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 10, font: { size: 12 } } } } } });
+</script>
+</body>
+</html>
