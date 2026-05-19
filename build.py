@@ -88,90 +88,260 @@ CITY_COORDS = {
 }
 
 CITY_TO_COUNTY = {
-    # London — GA4 reports all London as "London"; handled as special case in JS map
-    "London":"London",
-    # West Midlands metro LADs
-    "Birmingham":"Birmingham","Wolverhampton":"Wolverhampton","Coventry":"Coventry",
-    "Walsall":"Walsall","Sandwell":"Sandwell","Dudley":"Dudley","Solihull":"Solihull",
-    # Greater Manchester LADs
-    "Manchester":"Manchester","Salford":"Salford","Bolton":"Bolton",
-    "Oldham":"Oldham","Rochdale":"Rochdale","Stockport":"Stockport","Wigan":"Wigan",
-    "Bury":"Bury","Tameside":"Tameside","Trafford":"Trafford",
-    # West Yorkshire LADs
-    "Leeds":"Leeds","Bradford":"Bradford","Huddersfield":"Kirklees","Wakefield":"Wakefield","Halifax":"Calderdale",
-    # South Yorkshire LADs
-    "Sheffield":"Sheffield","Doncaster":"Doncaster","Barnsley":"Barnsley","Rotherham":"Rotherham",
-    # Merseyside LADs
-    "Liverpool":"Liverpool","Birkenhead":"Wirral","Southport":"Sefton","St Helens":"St. Helens","Knowsley":"Knowsley",
-    # Devon LADs
-    "Plymouth":"Plymouth","Exeter":"Exeter","Torquay":"Torbay","Brixham":"Torbay",
-    "Barnstaple":"North Devon","Tavistock":"West Devon","Newton Abbot":"Teignbridge",
-    "Exmouth":"East Devon","Honiton":"East Devon","Sidmouth":"East Devon","Crediton":"Mid Devon",
-    # Bristol / South West LADs
-    "Bristol":"Bristol, City of","Bath":"Bath and North East Somerset","Weston-super-Mare":"North Somerset",
-    "Taunton":"Taunton Deane","Yeovil":"South Somerset","Bridgwater":"Sedgemoor","Frome":"Mendip",
-    "Gloucester":"Gloucester","Cheltenham":"Cheltenham","Cirencester":"Cotswold","Stroud":"Stroud",
-    "Swindon":"Swindon","Salisbury":"Wiltshire","Chippenham":"Wiltshire","Trowbridge":"Wiltshire",
+    # London
+    "London":"Greater London",
+    # West Midlands
+    "Birmingham":"West Midlands","Wolverhampton":"West Midlands","Coventry":"West Midlands",
+    "Walsall":"West Midlands","Sandwell":"West Midlands","Dudley":"West Midlands","Solihull":"West Midlands",
+    # Greater Manchester
+    "Manchester":"Greater Manchester","Salford":"Greater Manchester","Bolton":"Greater Manchester",
+    "Oldham":"Greater Manchester","Rochdale":"Greater Manchester","Stockport":"Greater Manchester","Wigan":"Greater Manchester",
+    "Bury":"Greater Manchester","Tameside":"Greater Manchester","Trafford":"Greater Manchester",
+    # West Yorkshire
+    "Leeds":"West Yorkshire","Bradford":"West Yorkshire","Huddersfield":"West Yorkshire","Wakefield":"West Yorkshire","Halifax":"West Yorkshire",
+    # South Yorkshire
+    "Sheffield":"South Yorkshire","Doncaster":"South Yorkshire","Barnsley":"South Yorkshire","Rotherham":"South Yorkshire",
+    # Merseyside
+    "Liverpool":"Merseyside","Birkenhead":"Merseyside","Southport":"Merseyside","St Helens":"Merseyside","Knowsley":"Merseyside",
+    # Devon
+    "Plymouth":"Devon","Exeter":"Devon","Torquay":"Devon","Brixham":"Devon",
+    "Barnstaple":"Devon","Tavistock":"Devon","Newton Abbot":"Devon",
+    "Exmouth":"Devon","Honiton":"Devon","Sidmouth":"Devon","Crediton":"Devon",
+    # Bristol / South West
+    "Bristol":"Somerset","Bath":"Somerset","Weston-super-Mare":"Somerset",
+    "Taunton":"Somerset","Yeovil":"Somerset","Bridgwater":"Somerset","Frome":"Somerset",
+    "Gloucester":"Gloucestershire","Cheltenham":"Gloucestershire","Cirencester":"Gloucestershire","Stroud":"Gloucestershire",
+    "Swindon":"Wiltshire","Salisbury":"Wiltshire","Chippenham":"Wiltshire","Trowbridge":"Wiltshire",
     "Truro":"Cornwall","Newquay":"Cornwall",
-    # Norfolk / Suffolk / Essex LADs
-    "Norwich":"Norwich","Great Yarmouth":"Great Yarmouth",
-    "Ipswich":"Ipswich","Bury St Edmunds":"St Edmundsbury","Lowestoft":"Waveney",
-    "Newmarket":"Forest Heath","Haverhill":"St Edmundsbury",
-    "Colchester":"Colchester","Chelmsford":"Chelmsford","Basildon":"Basildon",
-    "Southend-on-Sea":"Southend-on-Sea","Harlow":"Harlow",
-    # Tyne & Wear LADs
-    "Newcastle upon Tyne":"Newcastle upon Tyne","Newcastle":"Newcastle upon Tyne",
-    "Sunderland":"Sunderland","Gateshead":"Gateshead",
-    # East Midlands LADs
-    "Nottingham":"Nottingham","Leicester":"Leicester","Derby":"Derby",
-    "Northampton":"Northampton","Peterborough":"Peterborough","Cambridge":"Cambridge",
-    "Lincoln":"Lincoln",
+    # Norfolk / Suffolk / Essex
+    "Norwich":"Norfolk","Great Yarmouth":"Norfolk",
+    "Ipswich":"Suffolk","Bury St Edmunds":"Suffolk","Lowestoft":"Suffolk","Newmarket":"Suffolk","Haverhill":"Suffolk",
+    "Colchester":"Essex","Chelmsford":"Essex","Basildon":"Essex","Southend-on-Sea":"Essex","Harlow":"Essex",
+    # Tyne & Wear
+    "Newcastle upon Tyne":"Tyne and Wear","Newcastle":"Tyne and Wear","Sunderland":"Tyne and Wear","Gateshead":"Tyne and Wear",
+    # East Midlands
+    "Nottingham":"Nottinghamshire","Leicester":"Leicestershire","Derby":"Derbyshire",
+    "Northampton":"Northamptonshire","Peterborough":"Cambridgeshire","Cambridge":"Cambridgeshire",
+    "Lincoln":"Lincolnshire",
     # Yorkshire
-    "York":"York","Middlesbrough":"Middlesbrough",
-    "Hull":"Kingston upon Hull, City of","Kingston upon Hull":"Kingston upon Hull, City of",
-    # Lancashire LADs
-    "Preston":"Preston","Blackpool":"Blackpool","Blackburn":"Blackburn with Darwen","Lancaster":"Lancaster",
+    "York":"North Yorkshire","Middlesbrough":"Cleveland",
+    "Hull":"North Yorkshire","Kingston upon Hull":"North Yorkshire",
+    # Lancashire
+    "Preston":"Lancashire","Blackpool":"Lancashire","Blackburn":"Lancashire","Lancaster":"Lancashire",
     # Cheshire
-    "Chester":"Cheshire West and Chester","Warrington":"Warrington",
+    "Chester":"Cheshire","Warrington":"Cheshire",
     # North East
-    "Durham":"County Durham","Carlisle":"Carlisle",
-    # Beds / Herts / Bucks LADs
-    "Luton":"Luton","Bedford":"Bedford","Dunstable":"Central Bedfordshire",
-    "Watford":"Watford","St Albans":"St Albans","Stevenage":"Stevenage",
-    "Hemel Hempstead":"Dacorum","Hatfield":"Welwyn Hatfield","Welwyn Garden City":"Welwyn Hatfield",
-    "Letchworth":"North Hertfordshire","Hitchin":"North Hertfordshire",
-    "Milton Keynes":"Milton Keynes","Aylesbury":"Aylesbury Vale","High Wycombe":"Wycombe",
-    # Berkshire / Oxfordshire LADs
-    "Reading":"Reading","Slough":"Slough","Windsor":"Windsor and Maidenhead","Maidenhead":"Windsor and Maidenhead",
-    "Wokingham":"Wokingham","Bracknell":"Bracknell Forest","Newbury":"West Berkshire",
-    "Oxford":"Oxford","Banbury":"Cherwell","Bicester":"Cherwell","Witney":"West Oxfordshire","Abingdon":"Vale of White Horse",
-    # Hampshire / Surrey / Kent / Sussex LADs
-    "Southampton":"Southampton","Portsmouth":"Portsmouth","Basingstoke":"Basingstoke and Deane",
-    "Winchester":"Winchester","Aldershot":"Rushmoor","Andover":"Test Valley",
-    "Guildford":"Guildford","Woking":"Woking","Crawley":"Crawley","Worthing":"Worthing",
-    "Brighton":"Brighton and Hove","Brighton and Hove":"Brighton and Hove","Eastbourne":"Eastbourne","Hastings":"Hastings",
-    "Canterbury":"Canterbury","Maidstone":"Maidstone","Medway":"Medway","Folkestone":"Shepway",
-    # West Midlands non-metro LADs
-    "Worcester":"Worcester","Hereford":"Herefordshire, County of","Shrewsbury":"Shropshire","Telford":"Telford and Wrekin",
-    "Stoke-on-Trent":"Stoke-on-Trent","Burton upon Trent":"East Staffordshire","Stafford":"Stafford",
-    # Scotland LADs
+    "Durham":"Durham","Carlisle":"Cumbria",
+    # Beds / Herts / Bucks
+    "Luton":"Bedfordshire","Bedford":"Bedfordshire","Dunstable":"Bedfordshire",
+    "Watford":"Hertfordshire","St Albans":"Hertfordshire","Stevenage":"Hertfordshire",
+    "Hemel Hempstead":"Hertfordshire","Hatfield":"Hertfordshire","Welwyn Garden City":"Hertfordshire","Letchworth":"Hertfordshire","Hitchin":"Hertfordshire",
+    "Milton Keynes":"Buckinghamshire","Aylesbury":"Buckinghamshire","High Wycombe":"Buckinghamshire",
+    # Berkshire / Oxfordshire
+    "Reading":"West Berkshire","Slough":"West Berkshire","Windsor":"West Berkshire","Maidenhead":"West Berkshire",
+    "Wokingham":"West Berkshire","Bracknell":"West Berkshire","Newbury":"West Berkshire",
+    "Oxford":"Oxfordshire","Banbury":"Oxfordshire","Bicester":"Oxfordshire","Witney":"Oxfordshire","Abingdon":"Oxfordshire",
+    # Hampshire / Surrey / Kent / Sussex
+    "Southampton":"Hampshire","Portsmouth":"Hampshire","Basingstoke":"Hampshire",
+    "Winchester":"Hampshire","Aldershot":"Hampshire","Andover":"Hampshire",
+    "Guildford":"Surrey","Woking":"Surrey","Crawley":"West Sussex","Worthing":"West Sussex",
+    "Brighton":"East Sussex","Brighton and Hove":"East Sussex","Eastbourne":"East Sussex","Hastings":"East Sussex",
+    "Canterbury":"Kent","Maidstone":"Kent","Medway":"Kent","Folkestone":"Kent",
+    # West Midlands non-metro
+    "Worcester":"Worcestershire","Hereford":"Worcestershire","Shrewsbury":"Shropshire","Telford":"Shropshire",
+    "Stoke-on-Trent":"Staffordshire","Burton upon Trent":"Staffordshire","Stafford":"Staffordshire",
+    # Scotland
     "Edinburgh":"City of Edinburgh","Glasgow":"Glasgow City","Aberdeen":"Aberdeen City",
     "Dundee":"Dundee City","Perth":"Perth and Kinross","Stirling":"Stirling","Inverness":"Highland",
     "Kilmarnock":"East Ayrshire","Ayr":"South Ayrshire","Paisley":"Renfrewshire",
     "Motherwell":"North Lanarkshire","Hamilton":"South Lanarkshire","Livingston":"West Lothian",
     "Falkirk":"Falkirk","Dunfermline":"Fife","Kirkcaldy":"Fife","Glenrothes":"Fife",
     "Dumfries":"Dumfries and Galloway","Oban":"Argyll and Bute","Fort William":"Highland",
-    # Wales LADs
+    # Wales
     "Cardiff":"Cardiff","Swansea":"Swansea","Newport":"Newport","Wrexham":"Wrexham",
     "Barry":"Vale of Glamorgan","Bridgend":"Bridgend","Neath":"Neath Port Talbot",
     "Llanelli":"Carmarthenshire","Carmarthen":"Carmarthenshire","Merthyr Tydfil":"Merthyr Tydfil",
     "Pontypridd":"Rhondda Cynon Taf","Caerphilly":"Caerphilly","Cwmbran":"Torfaen",
     "Aberystwyth":"Ceredigion","Llandudno":"Conwy","Rhyl":"Denbighshire","Colwyn Bay":"Conwy",
-    # Northern Ireland council areas
+    # Northern Ireland
     "Belfast":"Belfast","Derry":"Derry City and Strabane","Londonderry":"Derry City and Strabane",
     "Lisburn":"Lisburn and Castlereagh","Newry":"Newry Mourne and Down","Armagh":"Armagh City Banbridge and Craigavon",
     "Antrim":"Antrim and Newtownabbey","Ballymena":"Mid and East Antrim","Coleraine":"Causeway Coast and Glens",
     "Omagh":"Derry City and Strabane","Enniskillen":"Fermanagh and Omagh",
+}
+
+# Maps every LAD13NM (England/Wales/Scotland) and LGDNAME (NI) to its traditional county
+LAD_TO_COUNTY = {
+    # === GREATER LONDON (all 33 boroughs) ===
+    "City of London":"Greater London","Barking and Dagenham":"Greater London","Barnet":"Greater London",
+    "Bexley":"Greater London","Brent":"Greater London","Bromley":"Greater London","Camden":"Greater London",
+    "Croydon":"Greater London","Ealing":"Greater London","Enfield":"Greater London","Greenwich":"Greater London",
+    "Hackney":"Greater London","Hammersmith and Fulham":"Greater London","Haringey":"Greater London",
+    "Harrow":"Greater London","Havering":"Greater London","Hillingdon":"Greater London","Hounslow":"Greater London",
+    "Islington":"Greater London","Kensington and Chelsea":"Greater London","Kingston upon Thames":"Greater London",
+    "Lambeth":"Greater London","Lewisham":"Greater London","Merton":"Greater London","Newham":"Greater London",
+    "Redbridge":"Greater London","Richmond upon Thames":"Greater London","Southwark":"Greater London",
+    "Sutton":"Greater London","Tower Hamlets":"Greater London","Waltham Forest":"Greater London",
+    "Wandsworth":"Greater London","Westminster":"Greater London",
+    # === TYNE AND WEAR ===
+    "Newcastle upon Tyne":"Tyne and Wear","Gateshead":"Tyne and Wear","Sunderland":"Tyne and Wear",
+    "South Tyneside":"Tyne and Wear","North Tyneside":"Tyne and Wear",
+    # === NORTHUMBERLAND ===
+    "Northumberland":"Northumberland",
+    # === DURHAM ===
+    "County Durham":"Durham","Darlington":"Durham",
+    # === CLEVELAND ===
+    "Hartlepool":"Cleveland","Middlesbrough":"Cleveland","Stockton-on-Tees":"Cleveland","Redcar and Cleveland":"Cleveland",
+    # === CUMBRIA ===
+    "Allerdale":"Cumbria","Barrow-in-Furness":"Cumbria","Carlisle":"Cumbria",
+    "Copeland":"Cumbria","Eden":"Cumbria","South Lakeland":"Cumbria",
+    # === LANCASHIRE ===
+    "Burnley":"Lancashire","Chorley":"Lancashire","Fylde":"Lancashire","Hyndburn":"Lancashire",
+    "Lancaster":"Lancashire","Pendle":"Lancashire","Preston":"Lancashire","Ribble Valley":"Lancashire",
+    "Rossendale":"Lancashire","South Ribble":"Lancashire","West Lancashire":"Lancashire","Wyre":"Lancashire",
+    "Blackburn with Darwen":"Lancashire","Blackpool":"Lancashire",
+    # === GREATER MANCHESTER ===
+    "Bolton":"Greater Manchester","Bury":"Greater Manchester","Manchester":"Greater Manchester",
+    "Oldham":"Greater Manchester","Rochdale":"Greater Manchester","Salford":"Greater Manchester",
+    "Stockport":"Greater Manchester","Tameside":"Greater Manchester","Trafford":"Greater Manchester","Wigan":"Greater Manchester",
+    # === MERSEYSIDE ===
+    "Knowsley":"Merseyside","Liverpool":"Merseyside","Sefton":"Merseyside","St. Helens":"Merseyside","Wirral":"Merseyside",
+    # === CHESHIRE ===
+    "Cheshire East":"Cheshire","Cheshire West and Chester":"Cheshire","Halton":"Cheshire","Warrington":"Cheshire",
+    # === WEST YORKSHIRE ===
+    "Bradford":"West Yorkshire","Calderdale":"West Yorkshire","Kirklees":"West Yorkshire",
+    "Leeds":"West Yorkshire","Wakefield":"West Yorkshire",
+    # === SOUTH YORKSHIRE ===
+    "Barnsley":"South Yorkshire","Doncaster":"South Yorkshire","Rotherham":"South Yorkshire","Sheffield":"South Yorkshire",
+    # === NORTH YORKSHIRE ===
+    "Craven":"North Yorkshire","Hambleton":"North Yorkshire","Harrogate":"North Yorkshire","Richmondshire":"North Yorkshire",
+    "Ryedale":"North Yorkshire","Scarborough":"North Yorkshire","Selby":"North Yorkshire","York":"North Yorkshire",
+    "East Riding of Yorkshire":"North Yorkshire","Kingston upon Hull, City of":"North Yorkshire",
+    # === LINCOLNSHIRE ===
+    "Boston":"Lincolnshire","East Lindsey":"Lincolnshire","Lincoln":"Lincolnshire","North Kesteven":"Lincolnshire",
+    "South Holland":"Lincolnshire","South Kesteven":"Lincolnshire","West Lindsey":"Lincolnshire",
+    "North East Lincolnshire":"Lincolnshire","North Lincolnshire":"Lincolnshire",
+    # === NOTTINGHAMSHIRE ===
+    "Ashfield":"Nottinghamshire","Bassetlaw":"Nottinghamshire","Broxtowe":"Nottinghamshire","Gedling":"Nottinghamshire",
+    "Mansfield":"Nottinghamshire","Newark and Sherwood":"Nottinghamshire","Nottingham":"Nottinghamshire","Rushcliffe":"Nottinghamshire",
+    # === DERBYSHIRE ===
+    "Amber Valley":"Derbyshire","Bolsover":"Derbyshire","Chesterfield":"Derbyshire","Derby":"Derbyshire",
+    "Derbyshire Dales":"Derbyshire","Erewash":"Derbyshire","High Peak":"Derbyshire",
+    "North East Derbyshire":"Derbyshire","South Derbyshire":"Derbyshire",
+    # === LEICESTERSHIRE ===
+    "Blaby":"Leicestershire","Charnwood":"Leicestershire","Harborough":"Leicestershire","Hinckley and Bosworth":"Leicestershire",
+    "Leicester":"Leicestershire","Melton":"Leicestershire","North West Leicestershire":"Leicestershire","Oadby and Wigston":"Leicestershire",
+    # === NORTHAMPTONSHIRE ===
+    "Corby":"Northamptonshire","Daventry":"Northamptonshire","East Northamptonshire":"Northamptonshire",
+    "Kettering":"Northamptonshire","Northampton":"Northamptonshire","South Northamptonshire":"Northamptonshire","Wellingborough":"Northamptonshire",
+    # === STAFFORDSHIRE ===
+    "Cannock Chase":"Staffordshire","East Staffordshire":"Staffordshire","Lichfield":"Staffordshire",
+    "Newcastle-under-Lyme":"Staffordshire","South Staffordshire":"Staffordshire","Stafford":"Staffordshire",
+    "Staffordshire Moorlands":"Staffordshire","Stoke-on-Trent":"Staffordshire","Tamworth":"Staffordshire",
+    # === WEST MIDLANDS ===
+    "Birmingham":"West Midlands","Coventry":"West Midlands","Dudley":"West Midlands","Sandwell":"West Midlands",
+    "Solihull":"West Midlands","Walsall":"West Midlands","Wolverhampton":"West Midlands",
+    # === WARWICKSHIRE ===
+    "North Warwickshire":"Warwickshire","Nuneaton and Bedworth":"Warwickshire","Rugby":"Warwickshire",
+    "Stratford-on-Avon":"Warwickshire","Warwick":"Warwickshire",
+    # === WORCESTERSHIRE ===
+    "Bromsgrove":"Worcestershire","Malvern Hills":"Worcestershire","Redditch":"Worcestershire",
+    "Worcester":"Worcestershire","Wychavon":"Worcestershire","Wyre Forest":"Worcestershire",
+    "Herefordshire, County of":"Worcestershire",
+    # === SHROPSHIRE ===
+    "Shropshire":"Shropshire","Telford and Wrekin":"Shropshire",
+    # === NORFOLK ===
+    "Breckland":"Norfolk","Broadland":"Norfolk","Great Yarmouth":"Norfolk","King's Lynn and West Norfolk":"Norfolk",
+    "North Norfolk":"Norfolk","Norwich":"Norfolk","South Norfolk":"Norfolk",
+    # === SUFFOLK ===
+    "Babergh":"Suffolk","Forest Heath":"Suffolk","Ipswich":"Suffolk","Mid Suffolk":"Suffolk",
+    "St Edmundsbury":"Suffolk","Suffolk Coastal":"Suffolk","Waveney":"Suffolk",
+    # === CAMBRIDGESHIRE ===
+    "Cambridge":"Cambridgeshire","East Cambridgeshire":"Cambridgeshire","Fenland":"Cambridgeshire",
+    "Huntingdonshire":"Cambridgeshire","Peterborough":"Cambridgeshire","South Cambridgeshire":"Cambridgeshire",
+    # === ESSEX ===
+    "Basildon":"Essex","Braintree":"Essex","Brentwood":"Essex","Castle Point":"Essex","Chelmsford":"Essex",
+    "Colchester":"Essex","Epping Forest":"Essex","Harlow":"Essex","Maldon":"Essex","Rochford":"Essex",
+    "Southend-on-Sea":"Essex","Tendring":"Essex","Thurrock":"Essex","Uttlesford":"Essex",
+    # === HERTFORDSHIRE ===
+    "Broxbourne":"Hertfordshire","Dacorum":"Hertfordshire","East Hertfordshire":"Hertfordshire",
+    "Hertsmere":"Hertfordshire","North Hertfordshire":"Hertfordshire","St Albans":"Hertfordshire",
+    "Stevenage":"Hertfordshire","Three Rivers":"Hertfordshire","Watford":"Hertfordshire","Welwyn Hatfield":"Hertfordshire",
+    # === BEDFORDSHIRE ===
+    "Bedford":"Bedfordshire","Central Bedfordshire":"Bedfordshire","Luton":"Bedfordshire",
+    # === BUCKINGHAMSHIRE ===
+    "Aylesbury Vale":"Buckinghamshire","Chiltern":"Buckinghamshire","Milton Keynes":"Buckinghamshire",
+    "South Bucks":"Buckinghamshire","Wycombe":"Buckinghamshire",
+    # === OXFORDSHIRE ===
+    "Cherwell":"Oxfordshire","Oxford":"Oxfordshire","South Oxfordshire":"Oxfordshire",
+    "Vale of White Horse":"Oxfordshire","West Oxfordshire":"Oxfordshire",
+    # === WEST BERKSHIRE (all Berkshire unitaries) ===
+    "Bracknell Forest":"West Berkshire","Reading":"West Berkshire","Slough":"West Berkshire",
+    "West Berkshire":"West Berkshire","Windsor and Maidenhead":"West Berkshire","Wokingham":"West Berkshire",
+    # === HAMPSHIRE ===
+    "Basingstoke and Deane":"Hampshire","East Hampshire":"Hampshire","Eastleigh":"Hampshire",
+    "Fareham":"Hampshire","Gosport":"Hampshire","Hart":"Hampshire","Havant":"Hampshire",
+    "New Forest":"Hampshire","Portsmouth":"Hampshire","Rushmoor":"Hampshire",
+    "Southampton":"Hampshire","Test Valley":"Hampshire","Winchester":"Hampshire",
+    # === SURREY ===
+    "Elmbridge":"Surrey","Epsom and Ewell":"Surrey","Guildford":"Surrey","Mole Valley":"Surrey",
+    "Reigate and Banstead":"Surrey","Runnymede":"Surrey","Spelthorne":"Surrey","Surrey Heath":"Surrey",
+    "Tandridge":"Surrey","Waverley":"Surrey","Woking":"Surrey",
+    # === KENT ===
+    "Ashford":"Kent","Canterbury":"Kent","Dartford":"Kent","Dover":"Kent","Gravesham":"Kent",
+    "Maidstone":"Kent","Medway":"Kent","Sevenoaks":"Kent","Shepway":"Kent","Swale":"Kent",
+    "Thanet":"Kent","Tonbridge and Malling":"Kent","Tunbridge Wells":"Kent",
+    # === EAST SUSSEX ===
+    "Brighton and Hove":"East Sussex","Eastbourne":"East Sussex","Hastings":"East Sussex",
+    "Lewes":"East Sussex","Rother":"East Sussex","Wealden":"East Sussex",
+    # === WEST SUSSEX ===
+    "Adur":"West Sussex","Arun":"West Sussex","Chichester":"West Sussex","Crawley":"West Sussex",
+    "Horsham":"West Sussex","Mid Sussex":"West Sussex","Worthing":"West Sussex",
+    # === GLOUCESTERSHIRE ===
+    "Cheltenham":"Gloucestershire","Cotswold":"Gloucestershire","Forest of Dean":"Gloucestershire",
+    "Gloucester":"Gloucestershire","South Gloucestershire":"Gloucestershire","Stroud":"Gloucestershire","Tewkesbury":"Gloucestershire",
+    # === SOMERSET ===
+    "Bath and North East Somerset":"Somerset","Mendip":"Somerset","North Somerset":"Somerset",
+    "Sedgemoor":"Somerset","South Somerset":"Somerset","Taunton Deane":"Somerset","West Somerset":"Somerset",
+    "Bristol, City of":"Somerset",
+    # === WILTSHIRE ===
+    "Swindon":"Wiltshire","Wiltshire":"Wiltshire",
+    # === CORNWALL ===
+    "Cornwall":"Cornwall","Isles of Scilly":"Cornwall",
+    # === DEVON ===
+    "East Devon":"Devon","Exeter":"Devon","Mid Devon":"Devon","North Devon":"Devon","Plymouth":"Devon",
+    "South Hams":"Devon","Teignbridge":"Devon","Torbay":"Devon","Torridge":"Devon","West Devon":"Devon",
+    # === DORSET ===
+    "Bournemouth":"Dorset","Christchurch":"Dorset","East Dorset":"Dorset","North Dorset":"Dorset",
+    "Poole":"Dorset","Purbeck":"Dorset","West Dorset":"Dorset","Weymouth and Portland":"Dorset",
+    "Bournemouth, Christchurch and Poole":"Dorset",
+    # === SCOTLAND (LAD names are already the council area names used in CSV) ===
+    "Aberdeen City":"Aberdeen City","Aberdeenshire":"Aberdeenshire","Angus":"Angus",
+    "Argyll and Bute":"Argyll and Bute","City of Edinburgh":"City of Edinburgh","Clackmannanshire":"Clackmannanshire",
+    "Dumfries and Galloway":"Dumfries and Galloway","Dundee City":"Dundee City","East Ayrshire":"East Ayrshire",
+    "East Dunbartonshire":"East Dunbartonshire","East Lothian":"East Lothian","East Renfrewshire":"East Renfrewshire",
+    "Eilean Siar":"Eilean Siar","Falkirk":"Falkirk","Fife":"Fife","Glasgow City":"Glasgow City",
+    "Highland":"Highland","Inverclyde":"Inverclyde","Midlothian":"Midlothian","Moray":"Moray",
+    "North Ayrshire":"North Ayrshire","North Lanarkshire":"North Lanarkshire","Orkney Islands":"Orkney Islands",
+    "Perth and Kinross":"Perth and Kinross","Renfrewshire":"Renfrewshire","Scottish Borders":"Scottish Borders",
+    "Shetland Islands":"Shetland Islands","South Ayrshire":"South Ayrshire","South Lanarkshire":"South Lanarkshire",
+    "Stirling":"Stirling","West Dunbartonshire":"West Dunbartonshire","West Lothian":"West Lothian",
+    # === WALES (LAD names are principal areas — pass through as-is) ===
+    "Blaenau Gwent":"Blaenau Gwent","Bridgend":"Bridgend","Caerphilly":"Caerphilly","Cardiff":"Cardiff",
+    "Carmarthenshire":"Carmarthenshire","Ceredigion":"Ceredigion","Conwy":"Conwy","Denbighshire":"Denbighshire",
+    "Flintshire":"Flintshire","Gwynedd":"Gwynedd","Isle of Anglesey":"Isle of Anglesey","Merthyr Tydfil":"Merthyr Tydfil",
+    "Monmouthshire":"Monmouthshire","Neath Port Talbot":"Neath Port Talbot","Newport":"Newport",
+    "Pembrokeshire":"Pembrokeshire","Powys":"Powys","Rhondda Cynon Taf":"Rhondda Cynon Taf",
+    "Swansea":"Swansea","Torfaen":"Torfaen","Vale of Glamorgan":"Vale of Glamorgan","Wrexham":"Wrexham",
+    # === NORTHERN IRELAND (council areas — pass through as-is) ===
+    "Antrim and Newtownabbey":"Antrim and Newtownabbey","Ards and North Down":"Ards and North Down",
+    "Armagh City, Banbridge and Craigavon":"Armagh City Banbridge and Craigavon",
+    "Armagh City Banbridge and Craigavon":"Armagh City Banbridge and Craigavon",
+    "Belfast":"Belfast","Causeway Coast and Glens":"Causeway Coast and Glens",
+    "Derry City and Strabane":"Derry City and Strabane","Fermanagh and Omagh":"Fermanagh and Omagh",
+    "Lisburn and Castlereagh":"Lisburn and Castlereagh","Mid and East Antrim":"Mid and East Antrim",
+    "Mid Ulster":"Mid Ulster","Newry, Mourne and Down":"Newry Mourne and Down",
+    "Newry Mourne and Down":"Newry Mourne and Down",
 }
 
 
@@ -572,6 +742,7 @@ html = """<!DOCTYPE html>
 
 <script>
 const COLORS = """ + json.dumps(COLORS) + """;
+const LAD_TO_COUNTY = """ + json.dumps(LAD_TO_COUNTY) + """;
 """ + data_vars(p_ww6, "ww_6m") + """
 """ + data_vars(p_ww12, "ww_12m") + """
 """ + data_vars(p_gb6, "gb_6m") + """
@@ -633,20 +804,22 @@ function initGBMap(pid, cityData, countyData) {
   function ladDisplayName(props) {
     return props['LAD13NM'] || props['LGDNAME'] || Object.values(props||{})[0] || '';
   }
+  function resolveCounty(props) {
+    const lad = props['LAD13NM'] || props['LGDNAME'] || '';
+    if (!lad) return '';
+    const county = LAD_TO_COUNTY[lad] || lad;
+    return county;
+  }
   function findCountySessions(props) {
-    // London boroughs: LAD13CD starts E09 — attribute all to "London" entry
-    if (props['LAD13CD'] && props['LAD13CD'].startsWith('E09') && countyData['London']) {
-      return {name:'London', sessions:countyData['London']};
+    const county = resolveCounty(props);
+    if (county) {
+      const v = countyData[county];
+      if (v) return {name:county, sessions:v};
+      // fuzzy fallback
+      const pn = normName(county);
+      for (const [cn, cs] of Object.entries(countyData)) { if (normName(cn) === pn) return {name:cn, sessions:cs}; }
     }
-    const keys = ['LAD13NM','LGDNAME','CTY17NM','ctyua19nm','ctyua22nm','LAD17NM','lad17nm','lgdname','lad_name','name','NAME'];
-    for (const k of keys) { if (props[k]) { const n = props[k]; const v = countyData[n]; if (v) return {name:n,sessions:v}; } }
-    for (const k of keys) {
-      if (props[k]) {
-        const pn = normName(props[k]);
-        for (const [cn, cs] of Object.entries(countyData)) { if (normName(cn) === pn) return {name:cn,sessions:cs}; }
-      }
-    }
-    return {name:'',sessions:0};
+    return {name: county || ladDisplayName(props), sessions:0};
   }
 
   // UK county + country boundaries from ONS/martinjc
@@ -672,9 +845,10 @@ function initGBMap(pid, cityData, countyData) {
           },
           onEachFeature: (f, layer) => {
             const {name,sessions} = findCountySessions(f.properties||{});
-            const displayName = name || ladDisplayName(f.properties||{}) || 'Unknown';
+            const lad = ladDisplayName(f.properties||{});
+            const label = (name && name !== lad) ? lad + '<br><span style="font-size:11px;color:#6366f1">' + name + '</span>' : (name || lad || 'Unknown');
             layer.bindTooltip(
-              '<strong>' + displayName + '</strong>' + (sessions ? '<br>Sessions: ' + sessions.toLocaleString() : '<br>No data'),
+              '<strong>' + label + '</strong>' + (sessions ? '<br>Sessions: ' + sessions.toLocaleString() : '<br>No data'),
               {sticky:true, className:'county-tip'}
             );
             layer.on('mouseover', e => e.target.setStyle({weight:2,fillOpacity:0.9}));
@@ -799,21 +973,21 @@ function initCountyMap(pid, countyData) {
   }
 
   function normName(s) { return s ? s.toLowerCase().replace(/[^a-z0-9]/g,'') : ''; }
-  function ladName(props) { return props['LAD13NM'] || props['LGDNAME'] || Object.values(props||{})[0] || 'Unknown'; }
+  function resolveCounty2(props) {
+    const lad = props['LAD13NM'] || props['LGDNAME'] || '';
+    if (!lad) return {display: props['LAD13NM'] || Object.values(props||{})[0] || 'Unknown', county: ''};
+    const county = LAD_TO_COUNTY[lad] || lad;
+    return {display: lad, county};
+  }
   function findMatch(props) {
-    // London boroughs: LAD13CD starts E09 — attribute all to "London" entry
-    if (props['LAD13CD'] && props['LAD13CD'].startsWith('E09') && countyData['London']) {
-      return {name:'London', sessions:countyData['London']};
+    const {display, county} = resolveCounty2(props);
+    if (county) {
+      const v = countyData[county];
+      if (v !== undefined) return {name: county, sessions: v};
+      const pn = normName(county);
+      for (const [cn, cs] of Object.entries(countyData)) { if (normName(cn) === pn) return {name: cn, sessions: cs}; }
     }
-    const keys = ['LAD13NM','LGDNAME','CTY17NM','ctyua19nm','ctyua22nm','LAD17NM','lad17nm','lgdname','lad_name','name','NAME'];
-    for (const k of keys) { if (props[k]) { const v = countyData[props[k]]; if (v !== undefined) return {name:props[k], sessions:v}; } }
-    for (const k of keys) {
-      if (props[k]) {
-        const pn = normName(props[k]);
-        for (const [cn, cs] of Object.entries(countyData)) { if (normName(cn) === pn) return {name:cn, sessions:cs}; }
-      }
-    }
-    return {name: ladName(props), sessions: 0};
+    return {name: display || 'Unknown', sessions: 0};
   }
 
   function topoConvert(topo, geom) {
@@ -847,8 +1021,10 @@ function initCountyMap(pid, countyData) {
         },
         onEachFeature: (f, layer) => {
           const {name, sessions} = findMatch(f.properties||{});
+          const lad2 = f.properties['LAD13NM'] || f.properties['LGDNAME'] || '';
+          const label2 = (name && name !== lad2) ? lad2 + '<br><span style="font-size:11px;color:#6366f1">' + name + '</span>' : (name || lad2 || 'Unknown');
           layer.bindTooltip(
-            '<strong>' + name + '</strong><br>' + (sessions ? sessions.toLocaleString() + ' sessions' : 'No data'),
+            '<strong>' + label2 + '</strong><br>' + (sessions ? sessions.toLocaleString() + ' sessions' : 'No data'),
             {sticky:true, className:'county-tip'}
           );
           layer.on('mouseover', e => e.target.setStyle({weight:2, fillOpacity:0.95}));
