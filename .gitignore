@@ -1,0 +1,5 @@
+venv/
+token.json
+ga_data.json
+*.json
+!package.json
