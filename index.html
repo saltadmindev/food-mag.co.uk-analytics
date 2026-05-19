@@ -309,7 +309,7 @@ function initGBMap(pid, cityData, countyData) {
 
   function normName(s) { return s ? s.toLowerCase().replace(/[^a-z0-9]/g,'') : ''; }
   function findCountySessions(props) {
-    const keys = ['CTY17NM','ctyua19nm','ctyua22nm','LAD17NM','lad17nm','lgdname','lad_name','name','NAME'];
+    const keys = ['LAD13NM','LGDNAME','CTY17NM','ctyua19nm','ctyua22nm','LAD17NM','lad17nm','lgdname','lad_name','name','NAME'];
     for (const k of keys) { if (props[k]) { const n = props[k]; const v = countyData[n]; if (v) return {name:n,sessions:v}; } }
     for (const k of keys) {
       if (props[k]) {
@@ -322,10 +322,10 @@ function initGBMap(pid, cityData, countyData) {
 
   // UK county + country boundaries from ONS/martinjc
   const boundaryUrls = [
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/eng/topo_cty.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/eng/topo_lad.json',
     'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/sco/topo_lad.json',
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/wls/topo_lad.json',
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/nir/topo_lgd.json'
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/wal/topo_lad.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/ni/topo_lgd.json'
   ];
 
   boundaryUrls.forEach(url => {
@@ -471,7 +471,7 @@ function initCountyMap(pid, countyData) {
 
   function normName(s) { return s ? s.toLowerCase().replace(/[^a-z0-9]/g,'') : ''; }
   function findMatch(props) {
-    const keys = ['CTY17NM','ctyua19nm','ctyua22nm','LAD17NM','lad17nm','lgdname','lad_name','name','NAME'];
+    const keys = ['LAD13NM','LGDNAME','CTY17NM','ctyua19nm','ctyua22nm','LAD17NM','lad17nm','lgdname','lad_name','name','NAME'];
     for (const k of keys) { if (props[k]) { const v = countyData[props[k]]; if (v !== undefined) return {name:props[k], sessions:v}; } }
     for (const k of keys) {
       if (props[k]) {
@@ -497,10 +497,10 @@ function initCountyMap(pid, countyData) {
   }
 
   const urls = [
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/eng/topo_cty.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/eng/topo_lad.json',
     'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/sco/topo_lad.json',
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/wls/topo_lad.json',
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/nir/topo_lgd.json'
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/wal/topo_lad.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/ni/topo_lgd.json'
   ];
 
   urls.forEach(url => {
