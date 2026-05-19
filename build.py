@@ -114,8 +114,10 @@ def build_period(d):
     }
 
 
-p6  = build_period(raw["6m"])
-p12 = build_period(raw["12m"])
+p_ww6  = build_period(raw["ww_6m"])
+p_ww12 = build_period(raw["ww_12m"])
+p_gb6  = build_period(raw["gb_6m"])
+p_gb12 = build_period(raw["gb_12m"])
 
 
 def panel_html(p, pid, active):
@@ -205,10 +207,15 @@ html = """<!DOCTYPE html>
   .header{background:#fff;border-bottom:1px solid #e5e7eb;padding:24px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
   .header h1{font-size:20px;font-weight:700;color:#111827}
   .header p{color:#6b7280;font-size:13px;margin-top:2px}
-  .tabs{display:flex;gap:6px}
-  .tab{padding:7px 18px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
-  .tab.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
-  .tab:hover:not(.active){background:#f3f4f6;color:#111827}
+  .top-tabs{display:flex;gap:6px}
+  .top-tab{padding:8px 22px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s}
+  .top-tab.active{background:#111827;color:#fff;border-color:#111827}
+  .top-tab:hover:not(.active){background:#f3f4f6;color:#111827}
+  .sub-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:12px 40px;display:flex;gap:6px}
+  .sub-tab{padding:6px 16px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
+  .sub-tab.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
+  .sub-tab:hover:not(.active){background:#f3f4f6;color:#111827}
+  .section{display:none}.section.active{display:block}
   .container{max-width:1400px;margin:0 auto;padding:28px 40px}
   .panel{display:none}.panel.active{display:block}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
@@ -239,7 +246,7 @@ html = """<!DOCTYPE html>
   .badge-organicsocial{background:#f0f9ff;color:#0284c7}
   .badge-unassigned{background:#f9fafb;color:#9ca3af}
   .note{font-size:12px;color:#9ca3af;font-style:italic}
-  @media(max-width:900px){.grid-2,.grid-3,.grid-wide{grid-template-columns:1fr}.container{padding:16px}.header{padding:16px 20px}}
+  @media(max-width:900px){.grid-2,.grid-3,.grid-wide{grid-template-columns:1fr}.container{padding:16px}.header{padding:16px 20px}.sub-bar{padding:10px 16px}}
 </style>
 </head>
 <body>
@@ -248,30 +255,63 @@ html = """<!DOCTYPE html>
     <h1>food-mag.co.uk — Analytics</h1>
     <p>Generated """ + raw["generated"] + """</p>
   </div>
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('6m',this)">Last 6 Months</button>
-    <button class="tab" onclick="switchTab('12m',this)">Last 12 Months</button>
+  <div class="top-tabs">
+    <button class="top-tab active" onclick="switchSection('ww',this)">Worldwide</button>
+    <button class="top-tab" onclick="switchSection('gb',this)">GB Only</button>
   </div>
 </div>
-<div class="container">
-""" + panel_html(p6, "6m", True) + panel_html(p12, "12m", False) + """
+
+<div class="section active" id="section_ww">
+  <div class="sub-bar">
+    <button class="sub-tab active" onclick="switchPanel('ww_6m',this,'ww')">Last 6 Months</button>
+    <button class="sub-tab" onclick="switchPanel('ww_12m',this,'ww')">Last 12 Months</button>
+  </div>
+  <div class="container">
+""" + panel_html(p_ww6, "ww_6m", True) + panel_html(p_ww12, "ww_12m", False) + """
+  </div>
 </div>
+
+<div class="section" id="section_gb">
+  <div class="sub-bar">
+    <button class="sub-tab active" onclick="switchPanel('gb_6m',this,'gb')">Last 6 Months</button>
+    <button class="sub-tab" onclick="switchPanel('gb_12m',this,'gb')">Last 12 Months</button>
+  </div>
+  <div class="container">
+""" + panel_html(p_gb6, "gb_6m", True) + panel_html(p_gb12, "gb_12m", False) + """
+  </div>
+</div>
+
 <script>
 const COLORS = """ + json.dumps(COLORS) + """;
-""" + data_vars(p6, "6m") + """
-""" + data_vars(p12, "12m") + """
+""" + data_vars(p_ww6, "ww_6m") + """
+""" + data_vars(p_ww12, "ww_12m") + """
+""" + data_vars(p_gb6, "gb_6m") + """
+""" + data_vars(p_gb12, "gb_12m") + """
 const _done = {};
 function IC(id, cfg) { if (!_done[id]) { const el = document.getElementById(id); if (el) { new Chart(el, cfg); _done[id] = 1; } } }
-function init6m() {""" + init_js("6m") + """}
-function init12m() {""" + init_js("12m") + """}
-function switchTab(id, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+function initww_6m() {""" + init_js("ww_6m") + """}
+function initww_12m() {""" + init_js("ww_12m") + """}
+function initgb_6m() {""" + init_js("gb_6m") + """}
+function initgb_12m() {""" + init_js("gb_12m") + """}
+
+function switchSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section_' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'gb') initgb_6m();
+}
+
+function switchPanel(id, btn, section) {
+  const sec = document.getElementById('section_' + section);
+  sec.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.parentElement.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel_' + id).classList.add('active');
   btn.classList.add('active');
-  if (id === '12m') init12m();
+  window['init' + id]();
 }
-window.addEventListener('DOMContentLoaded', init6m);
+
+window.addEventListener('DOMContentLoaded', initww_6m);
 </script>
 </body>
 </html>"""

@@ -3,7 +3,8 @@ import os
 from datetime import datetime
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import (
-    RunReportRequest, Dimension, Metric, DateRange, OrderBy
+    RunReportRequest, Dimension, Metric, DateRange, OrderBy,
+    FilterExpression, Filter
 )
 from auth import get_credentials
 
@@ -12,8 +13,18 @@ PROPERTY_ID = "275227762"
 credentials = get_credentials()
 client = BetaAnalyticsDataClient(credentials=credentials)
 
+GB_FILTER = FilterExpression(
+    filter=Filter(
+        field_name="country",
+        string_filter=Filter.StringFilter(
+            match_type=Filter.StringFilter.MatchType.EXACT,
+            value="United Kingdom"
+        )
+    )
+)
 
-def fetch_range(date_range, engagement_limit):
+
+def fetch_range(date_range, engagement_limit, country_filter=None):
     def report(dimensions, metrics, limit=25, order_metric=None):
         kwargs = dict(
             property=f"properties/{PROPERTY_ID}",
@@ -24,6 +35,8 @@ def fetch_range(date_range, engagement_limit):
         )
         if order_metric:
             kwargs["order_bys"] = [OrderBy(metric=OrderBy.MetricOrderBy(metric_name=order_metric), desc=True)]
+        if country_filter:
+            kwargs["dimension_filter"] = country_filter
         try:
             resp = client.run_report(RunReportRequest(**kwargs))
             rows = []
@@ -51,16 +64,24 @@ def fetch_range(date_range, engagement_limit):
     }
 
 
-print("Fetching 6-month data...")
-six_months = fetch_range("180daysAgo", 180)
+print("Fetching worldwide 6-month...")
+ww_6m = fetch_range("180daysAgo", 180)
 
-print("Fetching 12-month data...")
-twelve_months = fetch_range("365daysAgo", 365)
+print("Fetching worldwide 12-month...")
+ww_12m = fetch_range("365daysAgo", 365)
+
+print("Fetching GB 6-month...")
+gb_6m = fetch_range("180daysAgo", 180, GB_FILTER)
+
+print("Fetching GB 12-month...")
+gb_12m = fetch_range("365daysAgo", 365, GB_FILTER)
 
 data = {
     "generated": datetime.now().strftime("%d %B %Y, %H:%M"),
-    "6m": six_months,
-    "12m": twelve_months,
+    "ww_6m": ww_6m,
+    "ww_12m": ww_12m,
+    "gb_6m": gb_6m,
+    "gb_12m": gb_12m,
 }
 
 with open(os.path.join(os.path.dirname(__file__), "ga_data.json"), "w") as f:
