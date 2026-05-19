@@ -346,9 +346,13 @@ def gb_location_html(p, pid):
         return ""
     return (
         "<div class=\"section-divider\"><span>GB Location Breakdown</span></div>"
-        "<div class=\"card full map-card\"><h2>Interactive Map — Sessions by Location</h2>"
+        "<div class=\"card full map-card\"><h2>Interactive Map — Sessions by Location (City Bubbles)</h2>"
         "<div id=\"gbMap_" + pid + "\" class=\"gb-map\"></div>"
         "<div class=\"map-legend\" id=\"legend_" + pid + "\"></div>"
+        "</div>"
+        "<div class=\"card full map-card\"><h2>Interactive Map — Sessions by County (Choropleth)</h2>"
+        "<div id=\"gbCountyMap_" + pid + "\" class=\"gb-map\"></div>"
+        "<div class=\"map-legend\" id=\"countyLegend_" + pid + "\"></div>"
         "</div>"
         "<div class=\"grid grid-2\">"
         "<div class=\"card\"><h2>Sessions by Region</h2><canvas id=\"regChart_" + pid + "\" height=\"160\"></canvas></div>"
@@ -455,6 +459,7 @@ def init_js(pid):
   if(typeof city_labels_{p}!=='undefined'&&city_labels_{p}.length) IC('cityChart_{p}',{type:'bar',data:{labels:city_labels_{p},datasets:[{label:'Sessions',data:city_sessions_{p},backgroundColor:COLORS,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151'},grid:{display:false}}}}});
   if(typeof county_labels_{p}!=='undefined'&&county_labels_{p}.length) IC('countyChart_{p}',{type:'bar',data:{labels:county_labels_{p},datasets:[{label:'Sessions',data:county_sessions_{p},backgroundColor:COLORS.concat(COLORS).concat(COLORS),borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151',font:{size:11}},grid:{display:false}}}}});
   if(typeof city_map_data_{p}!=='undefined') initGBMap('{p}', city_map_data_{p}, typeof county_map_{p}!=='undefined'?county_map_{p}:{});
+  if(typeof county_map_{p}!=='undefined') initCountyMap('{p}', county_map_{p});
 """.replace("{p}", pid)
 
 
@@ -744,6 +749,112 @@ function initGBMap(pid, cityData, countyData) {
       choroplethBreaks.map(b =>
         '<span class="map-legend-item"><span style="width:18px;height:12px;background:' + b.color + ';border:1px solid #c7d2fe;border-radius:2px;display:inline-block"></span>' + (b.label ? b.label : '') + '</span>'
       ).join('');
+  }
+
+  setTimeout(() => map.invalidateSize(), 100);
+}
+
+const _countyMaps = {};
+function initCountyMap(pid, countyData) {
+  if (_countyMaps[pid]) return;
+  const el = document.getElementById('gbCountyMap_' + pid);
+  if (!el) return;
+
+  const map = L.map('gbCountyMap_' + pid, {zoomControl:true, scrollWheelZoom:false}).setView([54.4, -3.2], 6);
+  _countyMaps[pid] = map;
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    maxZoom:13
+  }).addTo(map);
+
+  const maxVal = Math.max(1, ...Object.values(countyData));
+  const breaks = [
+    {thresh:0.5, fill:'#1e1b4b', label:'Very high'},
+    {thresh:0.25, fill:'#312e81', label:'High'},
+    {thresh:0.1,  fill:'#4338ca', label:'Medium-high'},
+    {thresh:0.04, fill:'#6366f1', label:'Medium'},
+    {thresh:0.01, fill:'#a5b4fc', label:'Low'},
+    {thresh:0,    fill:'#e0e7ff', label:'Very low'},
+  ];
+
+  function getColor(name) {
+    const s = countyData[name] || 0;
+    if (!s) return '#f1f5f9';
+    const t = s / maxVal;
+    for (const b of breaks) { if (t >= b.thresh) return b.fill; }
+    return '#e0e7ff';
+  }
+
+  function normName(s) { return s ? s.toLowerCase().replace(/[^a-z0-9]/g,'') : ''; }
+  function findMatch(props) {
+    const keys = ['CTY17NM','ctyua19nm','ctyua22nm','LAD17NM','lad17nm','lgdname','lad_name','name','NAME'];
+    for (const k of keys) { if (props[k]) { const v = countyData[props[k]]; if (v !== undefined) return {name:props[k], sessions:v}; } }
+    for (const k of keys) {
+      if (props[k]) {
+        const pn = normName(props[k]);
+        for (const [cn, cs] of Object.entries(countyData)) { if (normName(cn) === pn) return {name:cn, sessions:cs}; }
+      }
+    }
+    const fallback = Object.values(props||{})[0] || 'Unknown';
+    return {name: fallback, sessions: countyData[fallback] || 0};
+  }
+
+  function topoConvert(topo, geom) {
+    try {
+      const scale = topo.transform ? topo.transform.scale : [1,1];
+      const translate = topo.transform ? topo.transform.translate : [0,0];
+      function decodeArc(arc) { let x=0,y=0; return arc.map(([dx,dy])=>{x+=dx;y+=dy;return[x*scale[0]+translate[0],y*scale[1]+translate[1]];}); }
+      function arcCoords(i) { const r=i<0; const pts=decodeArc(topo.arcs[r?~i:i]); return r?pts.slice().reverse():pts; }
+      function ring(r) { return r.flatMap(arcCoords); }
+      if (geom.type==='Polygon') return {type:'Feature',properties:geom.properties||{},geometry:{type:'Polygon',coordinates:geom.arcs.map(ring)}};
+      if (geom.type==='MultiPolygon') return {type:'Feature',properties:geom.properties||{},geometry:{type:'MultiPolygon',coordinates:geom.arcs.map(p=>p.map(ring))}};
+    } catch(e) {}
+    return null;
+  }
+
+  const urls = [
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/eng/topo_cty.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/sco/topo_lad.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/wls/topo_lad.json',
+    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/nir/topo_lgd.json'
+  ];
+
+  urls.forEach(url => {
+    fetch(url).then(r=>r.json()).then(topo => {
+      const key = Object.keys(topo.objects)[0];
+      const features = topo.objects[key].geometries.map(g=>topoConvert(topo,g)).filter(Boolean);
+      L.geoJSON({type:'FeatureCollection',features}, {
+        style: f => {
+          const {name} = findMatch(f.properties||{});
+          return {color:'#6366f1', weight:1, fillColor:getColor(name), fillOpacity:0.8, opacity:0.6};
+        },
+        onEachFeature: (f, layer) => {
+          const {name, sessions} = findMatch(f.properties||{});
+          layer.bindTooltip(
+            '<strong>' + name + '</strong><br>' + (sessions ? sessions.toLocaleString() + ' sessions' : 'No data'),
+            {sticky:true, className:'county-tip'}
+          );
+          layer.on('mouseover', e => e.target.setStyle({weight:2, fillOpacity:0.95}));
+          layer.on('mouseout', e => { const {name:n}=findMatch(f.properties||{}); e.target.setStyle({weight:1,fillColor:getColor(n),fillOpacity:0.8}); });
+        }
+      }).addTo(map);
+    }).catch(()=>{});
+  });
+
+  // City labels overlay (no bubbles, just place name dots)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+    pane:'shadowPane', opacity:1, maxZoom:13
+  }).addTo(map);
+
+  // Choropleth legend
+  const leg = document.getElementById('countyLegend_' + pid);
+  if (leg) {
+    leg.innerHTML = '<span style="color:#374151;font-weight:600;margin-right:8px">Sessions per county:</span>' +
+      breaks.map(b =>
+        '<span class="map-legend-item"><span style="width:18px;height:12px;background:' + b.fill + ';border:1px solid rgba(99,102,241,0.3);border-radius:2px;display:inline-block"></span> ' + b.label + '</span>'
+      ).join('') +
+      '<span class="map-legend-item"><span style="width:18px;height:12px;background:#f1f5f9;border:1px solid #e5e7eb;border-radius:2px;display:inline-block"></span> No data</span>';
   }
 
   setTimeout(() => map.invalidateSize(), 100);
