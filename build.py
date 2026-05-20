@@ -170,6 +170,97 @@ CITY_TO_COUNTY = {
     "Omagh":"Derry City and Strabane","Enniskillen":"Fermanagh and Omagh",
 }
 
+# Maps GA4 city names directly to their LAD13NM / LGDNAME in the TopoJSON
+CITY_TO_LAD = {
+    # Greater London — all 33 boroughs share the "London" city total (see LONDON_LADS)
+    "London": "_LONDON",
+    # South West England
+    "Plymouth":"Plymouth","Bristol":"Bristol, City of","Bath":"Bath and North East Somerset",
+    "Exeter":"Exeter","Torquay":"Torbay","Brixham":"Torbay","Swindon":"Swindon",
+    "Gloucester":"Gloucester","Cheltenham":"Cheltenham","Salisbury":"Wiltshire",
+    "Taunton":"Taunton Deane","Weston-super-Mare":"North Somerset","Yeovil":"South Somerset",
+    "Truro":"Cornwall","Newquay":"Cornwall","Newton Abbot":"Teignbridge",
+    "Exmouth":"East Devon","Honiton":"East Devon","Sidmouth":"East Devon",
+    "Barnstaple":"North Devon","Tavistock":"West Devon","Crediton":"Mid Devon",
+    "Frome":"Mendip","Chippenham":"Wiltshire","Trowbridge":"Wiltshire",
+    "Cirencester":"Cotswold","Stroud":"Stroud","Bridgwater":"Sedgemoor",
+    # West Midlands
+    "Birmingham":"Birmingham","Wolverhampton":"Wolverhampton","Coventry":"Coventry",
+    "Walsall":"Walsall","Dudley":"Dudley","Sandwell":"Sandwell","Solihull":"Solihull",
+    "Stoke-on-Trent":"Stoke-on-Trent","Telford":"Telford and Wrekin",
+    "Worcester":"Worcester","Hereford":"Herefordshire, County of","Shrewsbury":"Shropshire",
+    # East Midlands
+    "Leicester":"Leicester","Nottingham":"Nottingham","Derby":"Derby",
+    "Northampton":"Northampton","Lincoln":"Lincoln",
+    # Yorkshire
+    "Leeds":"Leeds","Sheffield":"Sheffield","Bradford":"Bradford",
+    "Hull":"Kingston upon Hull, City of","Kingston upon Hull":"Kingston upon Hull, City of",
+    "York":"York","Huddersfield":"Kirklees","Doncaster":"Doncaster",
+    "Barnsley":"Barnsley","Wakefield":"Wakefield","Rotherham":"Rotherham",
+    # North West England
+    "Manchester":"Manchester","Liverpool":"Liverpool","Salford":"Salford",
+    "Bolton":"Bolton","Oldham":"Oldham","Rochdale":"Rochdale","Stockport":"Stockport",
+    "Wigan":"Wigan","Blackpool":"Blackpool","Preston":"Preston",
+    "Blackburn":"Blackburn with Darwen","Lancaster":"Lancaster",
+    "Chester":"Cheshire West and Chester","Warrington":"Warrington",
+    # North East England
+    "Newcastle upon Tyne":"Newcastle upon Tyne","Newcastle":"Newcastle upon Tyne",
+    "Sunderland":"Sunderland","Middlesbrough":"Middlesbrough","Durham":"County Durham",
+    "Carlisle":"Carlisle","Hartlepool":"Hartlepool","Darlington":"Darlington",
+    # East of England
+    "Norwich":"Norwich","Cambridge":"Cambridge","Peterborough":"Peterborough",
+    "Ipswich":"Ipswich","Luton":"Luton","Bedford":"Bedford","Chelmsford":"Chelmsford",
+    "Colchester":"Colchester","Southend-on-Sea":"Southend-on-Sea",
+    "Great Yarmouth":"Great Yarmouth","Lowestoft":"Waveney",
+    "Bury St Edmunds":"St Edmundsbury","Haverhill":"St Edmundsbury",
+    "Watford":"Watford","Stevenage":"Stevenage","Hemel Hempstead":"Dacorum",
+    "St Albans":"St Albans","Harlow":"Harlow",
+    "Huntingdon":"Huntingdonshire","St Neots":"Huntingdonshire","Wisbech":"Fenland",
+    "Newmarket":"Forest Heath",
+    # South East England
+    "Brighton":"Brighton and Hove","Brighton and Hove":"Brighton and Hove",
+    "Southampton":"Southampton","Portsmouth":"Portsmouth","Reading":"Reading",
+    "Slough":"Slough","Medway":"Medway","Guildford":"Guildford","Woking":"Woking",
+    "Bournemouth":"Bournemouth","Eastbourne":"Eastbourne","Hastings":"Hastings",
+    "Canterbury":"Canterbury","Maidstone":"Maidstone",
+    "Basingstoke":"Basingstoke and Deane","Winchester":"Winchester",
+    "Worthing":"Worthing","Crawley":"Crawley","Aldershot":"Rushmoor",
+    "Farnham":"Waverley","Aylesbury":"Aylesbury Vale","High Wycombe":"Wycombe",
+    "Milton Keynes":"Milton Keynes","Oxford":"Oxford","Banbury":"Cherwell",
+    "Wokingham":"Wokingham","Bracknell":"Bracknell Forest",
+    "Windsor":"Windsor and Maidenhead","Maidenhead":"Windsor and Maidenhead",
+    "Newbury":"West Berkshire",
+    # Wales
+    "Cardiff":"Cardiff","Swansea":"Swansea","Newport":"Newport","Wrexham":"Wrexham",
+    "Barry":"Vale of Glamorgan","Bridgend":"Bridgend","Merthyr Tydfil":"Merthyr Tydfil",
+    "Pontypridd":"Rhondda Cynon Taf","Llanelli":"Carmarthenshire",
+    "Carmarthen":"Carmarthenshire","Caerphilly":"Caerphilly","Cwmbran":"Torfaen",
+    "Neath":"Neath Port Talbot","Aberystwyth":"Ceredigion",
+    "Colwyn Bay":"Conwy","Llandudno":"Conwy","Rhyl":"Denbighshire",
+    # Scotland
+    "Edinburgh":"City of Edinburgh","Glasgow":"Glasgow City","Aberdeen":"Aberdeen City",
+    "Dundee":"Dundee City","Inverness":"Highland","Perth":"Perth and Kinross",
+    "Stirling":"Stirling","Falkirk":"Falkirk","Dunfermline":"Fife","Kirkcaldy":"Fife",
+    "Hamilton":"South Lanarkshire","Livingston":"West Lothian",
+    "Kilmarnock":"East Ayrshire","Ayr":"South Ayrshire","Paisley":"Renfrewshire",
+    "Motherwell":"North Lanarkshire","Dumfries":"Dumfries and Galloway",
+    # Northern Ireland (LGDNAME values from ni/topo_lgd.json — no commas in names)
+    "Belfast":"Belfast","Derry":"Derry and Strabane","Londonderry":"Derry and Strabane",
+    "Lisburn":"Lisburn and Castlereagh","Newry":"Newry Mourne and Down",
+    "Antrim":"Antrim and Newtownabbey","Ballymena":"Mid and East Antrim",
+    "Coleraine":"Causeway Coast and Glens",
+    "Omagh":"Fermanagh and Omagh","Enniskillen":"Fermanagh and Omagh",
+}
+
+LONDON_LADS = [
+    "City of London","Barking and Dagenham","Barnet","Bexley","Brent","Bromley",
+    "Camden","Croydon","Ealing","Enfield","Greenwich","Hackney",
+    "Hammersmith and Fulham","Haringey","Harrow","Havering","Hillingdon",
+    "Hounslow","Islington","Kensington and Chelsea","Kingston upon Thames",
+    "Lambeth","Lewisham","Merton","Newham","Redbridge","Richmond upon Thames",
+    "Southwark","Sutton","Tower Hamlets","Waltham Forest","Wandsworth","Westminster",
+]
+
 # Maps every LAD13NM (England/Wales/Scotland) and LGDNAME (NI) to its traditional county
 LAD_TO_COUNTY = {
     # === GREATER LONDON (all 33 boroughs) ===
@@ -352,13 +443,25 @@ def build_gb_location(d):
     city_rows   = [r for r in d["gb_city"]["rows"] if r[0] not in ("(not set)","")]
     cr_rows     = [r for r in d["gb_city_region"]["rows"] if r[0] not in ("(not set)","")]
 
-    # Aggregate sessions by county
+    # Aggregate sessions by county (for county chart / table)
     county_sessions = {}
     for r in city_rows:
         county = CITY_TO_COUNTY.get(r[0])
         if county:
             county_sessions[county] = county_sessions.get(county, 0) + int(r[1])
     county_sorted = sorted(county_sessions.items(), key=lambda x: x[1], reverse=True)
+
+    # Build LAD-level map: GA4 city → exact LAD13NM / LGDNAME (unique value per district)
+    lad_map = {}
+    for r in city_rows:
+        name = r[0]
+        sessions = int(r[1])
+        lad = CITY_TO_LAD.get(name)
+        if lad == "_LONDON":
+            for borough in LONDON_LADS:
+                lad_map[borough] = lad_map.get(borough, 0) + sessions
+        elif lad:
+            lad_map[lad] = lad_map.get(lad, 0) + sessions
 
     city_map_data = []
     for r in city_rows:
@@ -412,6 +515,7 @@ def build_gb_location(d):
         "county_labels":     [c[0] for c in county_sorted[:30]],
         "county_sessions":   [c[1] for c in county_sorted[:30]],
         "county_map":        dict(county_sorted),
+        "lad_map":           lad_map,
         "city_map_data":     city_map_data,
     }
 
@@ -529,7 +633,7 @@ def gb_location_html(p, pid):
 
         "<div class=\"card mb-4\">"
         "<div class=\"card-body\">"
-        "<h4 class=\"card-title\">Interactive Map &mdash; Sessions by County (Choropleth)</h4>"
+        "<h4 class=\"card-title\">Interactive Map &mdash; Sessions by District</h4>"
         "<div id=\"gbCountyMap_" + pid + "\" class=\"gb-map\"></div>"
         "<div class=\"map-legend mt-3\" id=\"countyLegend_" + pid + "\"></div>"
         "</div></div>"
@@ -756,6 +860,7 @@ def data_vars(p, pid):
         lines.append("const county_labels_" + pid + " = " + json.dumps(loc["county_labels"]) + ";")
         lines.append("const county_sessions_" + pid + " = " + json.dumps(loc["county_sessions"]) + ";")
         lines.append("const county_map_" + pid + " = " + json.dumps(loc["county_map"]) + ";")
+        lines.append("const lad_map_" + pid + " = " + json.dumps(loc["lad_map"]) + ";")
     return "\n".join(lines)
 
 
@@ -781,8 +886,8 @@ def init_js(pid):
   if(typeof reg_labels_{p}!=='undefined'&&reg_labels_{p}.length) IC('regChart_{p}',{type:'bar',data:{labels:reg_labels_{p},datasets:[{label:'Sessions',data:reg_sessions_{p},backgroundColor:COLORS,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151'},grid:{display:false}}}}});
   if(typeof city_labels_{p}!=='undefined'&&city_labels_{p}.length) IC('cityChart_{p}',{type:'bar',data:{labels:city_labels_{p},datasets:[{label:'Sessions',data:city_sessions_{p},backgroundColor:COLORS,borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151'},grid:{display:false}}}}});
   if(typeof county_labels_{p}!=='undefined'&&county_labels_{p}.length) IC('countyChart_{p}',{type:'bar',data:{labels:county_labels_{p},datasets:[{label:'Sessions',data:county_sessions_{p},backgroundColor:COLORS.concat(COLORS).concat(COLORS),borderRadius:4}]},options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#9ca3af'},grid:{color:'#f3f4f6'}},y:{ticks:{color:'#374151',font:{size:11}},grid:{display:false}}}}});
-  if(typeof city_map_data_{p}!=='undefined') initGBMap('{p}', city_map_data_{p}, typeof county_map_{p}!=='undefined'?county_map_{p}:{});
-  if(typeof county_map_{p}!=='undefined') initCountyMap('{p}', county_map_{p});
+  if(typeof city_map_data_{p}!=='undefined') initGBMap('{p}', city_map_data_{p});
+  if(typeof lad_map_{p}!=='undefined') initCountyMap('{p}', lad_map_{p});
 """.replace("{p}", pid)
 
 
@@ -945,7 +1050,6 @@ html = """<!DOCTYPE html>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const COLORS = """ + json.dumps(COLORS) + """;
-const LAD_TO_COUNTY = """ + json.dumps(LAD_TO_COUNTY) + """;
 """ + data_vars(p_ww6, "ww_6m") + """
 """ + data_vars(p_ww12, "ww_12m") + """
 """ + data_vars(p_gb6, "gb_6m") + """
@@ -958,7 +1062,7 @@ function initgb_6m() {""" + init_js("gb_6m") + """}
 function initgb_12m() {""" + init_js("gb_12m") + """}
 
 const _maps = {};
-function initGBMap(pid, cityData, countyData) {
+function initGBMap(pid, cityData) {
   if (_maps[pid]) return;
   const el = document.getElementById('gbMap_' + pid);
   if (!el) return;
@@ -1020,7 +1124,7 @@ function initGBMap(pid, cityData, countyData) {
 }
 
 const _countyMaps = {};
-function initCountyMap(pid, countyData) {
+function initCountyMap(pid, ladData) {
   if (_countyMaps[pid]) return;
   const el = document.getElementById('gbCountyMap_' + pid);
   if (!el) return;
@@ -1033,7 +1137,7 @@ function initCountyMap(pid, countyData) {
     minZoom:7, maxZoom:20
   }).addTo(map);
 
-  const maxVal = Math.max(1, ...Object.values(countyData));
+  const maxVal = Math.max(1, ...Object.values(ladData));
   const breaks = [
     {thresh:0.5, fill:'#1e1b4b', label:'Very high'},
     {thresh:0.25, fill:'#312e81', label:'High'},
@@ -1043,30 +1147,11 @@ function initCountyMap(pid, countyData) {
     {thresh:0,    fill:'#e0e7ff', label:'Very low'},
   ];
 
-  function getColor(name) {
-    const s = countyData[name] || 0;
-    if (!s) return '#f1f5f9';
-    const t = s / maxVal;
+  function getColor(sessions) {
+    if (!sessions) return '#f1f5f9';
+    const t = sessions / maxVal;
     for (const b of breaks) { if (t >= b.thresh) return b.fill; }
     return '#e0e7ff';
-  }
-
-  function normName(s) { return s ? s.toLowerCase().replace(/[^a-z0-9]/g,'') : ''; }
-  function resolveCounty2(props) {
-    const lad = props['LAD13NM'] || props['LGDNAME'] || '';
-    if (!lad) return {display: props['LAD13NM'] || Object.values(props||{})[0] || 'Unknown', county: ''};
-    const county = LAD_TO_COUNTY[lad] || lad;
-    return {display: lad, county};
-  }
-  function findMatch(props) {
-    const {display, county} = resolveCounty2(props);
-    if (county) {
-      const v = countyData[county];
-      if (v !== undefined) return {name: county, sessions: v};
-      const pn = normName(county);
-      for (const [cn, cs] of Object.entries(countyData)) { if (normName(cn) === pn) return {name: cn, sessions: cs}; }
-    }
-    return {name: display || 'Unknown', sessions: 0};
   }
 
   function topoConvert(topo, geom) {
@@ -1095,19 +1180,21 @@ function initCountyMap(pid, countyData) {
       const features = topo.objects[key].geometries.map(g=>topoConvert(topo,g)).filter(Boolean);
       L.geoJSON({type:'FeatureCollection',features}, {
         style: f => {
-          const {name} = findMatch(f.properties||{});
-          return {color:'#6366f1', weight:1, fillColor:getColor(name), fillOpacity:0.8, opacity:0.6};
+          const lad = f.properties['LAD13NM'] || f.properties['LGDNAME'] || '';
+          return {color:'#6366f1', weight:1, fillColor:getColor(ladData[lad]||0), fillOpacity:0.8, opacity:0.6};
         },
         onEachFeature: (f, layer) => {
-          const {name, sessions} = findMatch(f.properties||{});
-          const lad2 = f.properties['LAD13NM'] || f.properties['LGDNAME'] || '';
-          const label2 = (name && name !== lad2) ? lad2 + '<br><span style="font-size:11px;color:#6366f1">' + name + '</span>' : (name || lad2 || 'Unknown');
+          const lad = f.properties['LAD13NM'] || f.properties['LGDNAME'] || '';
+          const sessions = ladData[lad] || 0;
           layer.bindTooltip(
-            '<strong>' + label2 + '</strong><br>' + (sessions ? sessions.toLocaleString() + ' sessions' : 'No data'),
+            '<strong>' + lad + '</strong><br>' + (sessions ? sessions.toLocaleString() + ' sessions' : 'No data'),
             {sticky:true, className:'county-tip'}
           );
           layer.on('mouseover', e => e.target.setStyle({weight:2, fillOpacity:0.95}));
-          layer.on('mouseout', e => { const {name:n}=findMatch(f.properties||{}); e.target.setStyle({weight:1,fillColor:getColor(n),fillOpacity:0.8}); });
+          layer.on('mouseout', e => {
+            const s = ladData[f.properties['LAD13NM'] || f.properties['LGDNAME'] || ''] || 0;
+            e.target.setStyle({weight:1, fillColor:getColor(s), fillOpacity:0.8});
+          });
         }
       }).addTo(map);
     }).catch(()=>{});
@@ -1115,7 +1202,7 @@ function initCountyMap(pid, countyData) {
 
   const leg = document.getElementById('countyLegend_' + pid);
   if (leg) {
-    leg.innerHTML = '<span style="color:#455a64;font-weight:600;margin-right:8px">Sessions per county:</span>' +
+    leg.innerHTML = '<span style="color:#455a64;font-weight:600;margin-right:8px">Sessions by district:</span>' +
       breaks.map(b =>
         '<span class="map-legend-item"><span style="width:18px;height:12px;background:' + b.fill + ';border:1px solid rgba(99,102,241,0.3);border-radius:2px;display:inline-block"></span> ' + b.label + '</span>'
       ).join('') +
