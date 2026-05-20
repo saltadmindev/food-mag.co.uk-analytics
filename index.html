@@ -290,8 +290,8 @@ function initGBMap(pid, cityData, countyData) {
   const map = L.map('gbMap_' + pid, {zoomControl:true, scrollWheelZoom:false}).setView([54.4, -3.2], 6);
   _maps[pid] = map;
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  L.tileLayer('https://api.os.uk/maps/raster/v1/zxy/Light_3857/{z}/{x}/{y}.png?key=ubDCdHVhUQGyehuSrSkgfBifOjgkuA0F', {
+    attribution:'&copy; <a href="https://www.ordnancesurvey.co.uk/">Ordnance Survey</a>',
     maxZoom:13
   }).addTo(map);
 
@@ -457,8 +457,8 @@ function initCountyMap(pid, countyData) {
   const map = L.map('gbCountyMap_' + pid, {zoomControl:true, scrollWheelZoom:false}).setView([54.4, -3.2], 6);
   _countyMaps[pid] = map;
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  L.tileLayer('https://api.os.uk/maps/raster/v1/zxy/Light_3857/{z}/{x}/{y}.png?key=ubDCdHVhUQGyehuSrSkgfBifOjgkuA0F', {
+    attribution:'&copy; <a href="https://www.ordnancesurvey.co.uk/">Ordnance Survey</a>',
     maxZoom:13
   }).addTo(map);
 
@@ -543,9 +543,6 @@ function initCountyMap(pid, countyData) {
   });
 
   // City labels overlay (no bubbles, just place name dots)
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
-    pane:'shadowPane', opacity:1, maxZoom:13
-  }).addTo(map);
 
   // Choropleth legend
   const leg = document.getElementById('countyLegend_' + pid);
