@@ -323,12 +323,12 @@ function initGBMap(pid, cityData, countyData) {
   const el = document.getElementById('gbMap_' + pid);
   if (!el) return;
 
-  const map = L.map('gbMap_' + pid, {zoomControl:true, scrollWheelZoom:false}).setView([54.4, -3.2], 6);
+  const map = L.map('gbMap_' + pid, {zoomControl:true, scrollWheelZoom:false, minZoom:7}).setView([54.4, -3.2], 7);
   _maps[pid] = map;
 
   L.tileLayer('https://api.os.uk/maps/raster/v1/zxy/Light_3857/{z}/{x}/{y}.png?key=ubDCdHVhUQGyehuSrSkgfBifOjgkuA0F', {
     attribution:'&copy; <a href="https://www.ordnancesurvey.co.uk/">Ordnance Survey</a>',
-    maxZoom:13
+    minZoom:7, maxZoom:20
   }).addTo(map);
 
   const maxSessions = Math.max(...cityData.map(c => c.sessions));
@@ -376,7 +376,7 @@ function initGBMap(pid, cityData, countyData) {
       ).join('');
   }
 
-  setTimeout(() => map.invalidateSize(), 100);
+  setTimeout(() => map.invalidateSize(), 300);
 }
 
 const _countyMaps = {};
@@ -385,12 +385,12 @@ function initCountyMap(pid, countyData) {
   const el = document.getElementById('gbCountyMap_' + pid);
   if (!el) return;
 
-  const map = L.map('gbCountyMap_' + pid, {zoomControl:true, scrollWheelZoom:false}).setView([54.4, -3.2], 6);
+  const map = L.map('gbCountyMap_' + pid, {zoomControl:true, scrollWheelZoom:false, minZoom:7}).setView([54.4, -3.2], 7);
   _countyMaps[pid] = map;
 
   L.tileLayer('https://api.os.uk/maps/raster/v1/zxy/Light_3857/{z}/{x}/{y}.png?key=ubDCdHVhUQGyehuSrSkgfBifOjgkuA0F', {
     attribution:'&copy; <a href="https://www.ordnancesurvey.co.uk/">Ordnance Survey</a>',
-    maxZoom:13
+    minZoom:7, maxZoom:20
   }).addTo(map);
 
   const maxVal = Math.max(1, ...Object.values(countyData));
@@ -482,7 +482,7 @@ function initCountyMap(pid, countyData) {
       '<span class="map-legend-item"><span style="width:18px;height:12px;background:#f1f5f9;border:1px solid #e9ecef;border-radius:2px;display:inline-block"></span> No data</span>';
   }
 
-  setTimeout(() => map.invalidateSize(), 100);
+  setTimeout(() => map.invalidateSize(), 300);
 }
 
 // Sidebar nav
@@ -500,6 +500,10 @@ function showPanel(pid) {
   // lazy init charts/maps
   const inits = {ww_6m:initww_6m, ww_12m:initww_12m, gb_6m:initgb_6m, gb_12m:initgb_12m};
   if (inits[pid]) inits[pid]();
+  setTimeout(() => {
+    if (_maps[pid]) _maps[pid].invalidateSize();
+    if (_countyMaps[pid]) _countyMaps[pid].invalidateSize();
+  }, 250);
 }
 
 // Init feather icons
