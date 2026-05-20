@@ -787,104 +787,6 @@ function initGBMap(pid, cityData, countyData) {
     maxZoom:13
   }).addTo(map);
 
-  const maxCounty = Math.max(1, ...Object.values(countyData));
-  function countyColor(name) {
-    const s = countyData[name] || 0;
-    const t = s / maxCounty;
-    if (t > 0.6) return '#312e81';
-    if (t > 0.3) return '#4338ca';
-    if (t > 0.1) return '#6366f1';
-    if (t > 0.03) return '#a5b4fc';
-    if (s > 0) return '#e0e7ff';
-    return '#f8fafc';
-  }
-  function countyOpacity(name) { return countyData[name] ? 0.75 : 0.15; }
-
-  function normName(s) { return s ? s.toLowerCase().replace(/[^a-z0-9]/g,'') : ''; }
-  function ladDisplayName(props) {
-    return props['LAD13NM'] || props['LGDNAME'] || Object.values(props||{})[0] || '';
-  }
-  function resolveCounty(props) {
-    const lad = props['LAD13NM'] || props['LGDNAME'] || '';
-    if (!lad) return '';
-    const county = LAD_TO_COUNTY[lad] || lad;
-    return county;
-  }
-  function findCountySessions(props) {
-    const county = resolveCounty(props);
-    if (county) {
-      const v = countyData[county];
-      if (v) return {name:county, sessions:v};
-      // fuzzy fallback
-      const pn = normName(county);
-      for (const [cn, cs] of Object.entries(countyData)) { if (normName(cn) === pn) return {name:cn, sessions:cs}; }
-    }
-    return {name: county || ladDisplayName(props), sessions:0};
-  }
-
-  // UK county + country boundaries from ONS/martinjc
-  const boundaryUrls = [
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/eng/topo_lad.json',
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/sco/topo_lad.json',
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/wal/topo_lad.json',
-    'https://raw.githubusercontent.com/martinjc/UK-GeoJSON/master/json/administrative/ni/topo_lgd.json'
-  ];
-
-  boundaryUrls.forEach(url => {
-    fetch(url)
-      .then(r => r.json())
-      .then(topo => {
-        const objKey = Object.keys(topo.objects)[0];
-        const features = [];
-        topo.objects[objKey].geometries.forEach(geom => { features.push(convertTopo(topo, geom)); });
-        const gj = {type:'FeatureCollection', features: features.filter(Boolean)};
-        L.geoJSON(gj, {
-          style: f => {
-            const {name,sessions} = findCountySessions(f.properties||{});
-            return {color:'#6366f1', weight:0.8, fillColor:countyColor(name), fillOpacity:countyOpacity(name), opacity:0.7};
-          },
-          onEachFeature: (f, layer) => {
-            const {name,sessions} = findCountySessions(f.properties||{});
-            const lad = ladDisplayName(f.properties||{});
-            const label = (name && name !== lad) ? lad + '<br><span style="font-size:11px;color:#6366f1">' + name + '</span>' : (name || lad || 'Unknown');
-            layer.bindTooltip(
-              '<strong>' + label + '</strong>' + (sessions ? '<br>Sessions: ' + sessions.toLocaleString() : '<br>No data'),
-              {sticky:true, className:'county-tip'}
-            );
-            layer.on('mouseover', e => e.target.setStyle({weight:2,fillOpacity:0.9}));
-            layer.on('mouseout', e => e.target.setStyle({weight:0.8,fillColor:countyColor(name),fillOpacity:countyOpacity(name)}));
-          }
-        }).addTo(map);
-      }).catch(()=>{});
-  });
-
-  // Simple TopoJSON geometry converter (arcs → coordinates)
-  function convertTopo(topo, geom) {
-    try {
-      const scale = topo.transform ? topo.transform.scale : [1,1];
-      const translate = topo.transform ? topo.transform.translate : [0,0];
-      function decodeArc(arc) {
-        let x=0, y=0;
-        return arc.map(([dx,dy]) => { x+=dx; y+=dy; return [x*scale[0]+translate[0], y*scale[1]+translate[1]]; });
-      }
-      function arcToCoords(arcIdx) {
-        const reversed = arcIdx < 0;
-        const pts = decodeArc(topo.arcs[reversed ? ~arcIdx : arcIdx]);
-        return reversed ? pts.slice().reverse() : pts;
-      }
-      function ringCoords(ring) { return ring.flatMap(arcToCoords); }
-
-      let coords;
-      if (geom.type === 'Polygon') {
-        coords = geom.arcs.map(ring => ringCoords(ring).map(([lng,lat]) => [lat,lng]));
-        return {type:'Feature', properties: geom.properties||{}, geometry:{type:'Polygon', coordinates: geom.arcs.map(ring => ringCoords(ring))}};
-      } else if (geom.type === 'MultiPolygon') {
-        return {type:'Feature', properties: geom.properties||{}, geometry:{type:'MultiPolygon', coordinates: geom.arcs.map(poly => poly.map(ring => ringCoords(ring)))}};
-      }
-    } catch(e) {}
-    return null;
-  }
-
   // Bubble markers sized by sessions
   const maxSessions = Math.max(...cityData.map(c => c.sessions));
   const breaks = [
@@ -925,15 +827,10 @@ function initGBMap(pid, cityData, countyData) {
   // Legend
   const leg = document.getElementById('legend_' + pid);
   if (leg) {
-    const choroplethBreaks = [{color:'#e0e7ff',label:'Low'},{color:'#a5b4fc',label:''},{color:'#6366f1',label:''},{color:'#4338ca',label:''},{color:'#312e81',label:'High'}];
     leg.innerHTML =
-      '<span style="color:#374151;font-weight:600;margin-right:4px">City bubbles:</span>' +
+      '<span style="color:#374151;font-weight:600;margin-right:8px">Sessions by city:</span>' +
       breaks.map(b =>
         '<span class="map-legend-item"><span class="map-legend-dot" style="width:' + (b.r*2) + 'px;height:' + (b.r*2) + 'px;background:' + b.color + '"></span>' + b.label + '</span>'
-      ).join('') +
-      '<span style="margin-left:16px;color:#374151;font-weight:600;margin-right:4px">County fill:</span>' +
-      choroplethBreaks.map(b =>
-        '<span class="map-legend-item"><span style="width:18px;height:12px;background:' + b.color + ';border:1px solid #c7d2fe;border-radius:2px;display:inline-block"></span>' + (b.label ? b.label : '') + '</span>'
       ).join('');
   }
 
