@@ -520,77 +520,225 @@ def gb_location_html(p, pid):
     if not loc:
         return ""
     return (
-        "<div class=\"section-divider\"><span>GB Location Breakdown</span></div>"
-        "<div class=\"card full map-card\"><h2>Interactive Map — Sessions by Location (City Bubbles)</h2>"
+        "<div class=\"card mb-4\">"
+        "<div class=\"card-body\">"
+        "<h4 class=\"card-title\">Interactive Map &mdash; Sessions by City</h4>"
         "<div id=\"gbMap_" + pid + "\" class=\"gb-map\"></div>"
-        "<div class=\"map-legend\" id=\"legend_" + pid + "\"></div>"
-        "</div>"
-        "<div class=\"card full map-card\"><h2>Interactive Map — Sessions by County (Choropleth)</h2>"
+        "<div class=\"map-legend mt-3\" id=\"legend_" + pid + "\"></div>"
+        "</div></div>"
+
+        "<div class=\"card mb-4\">"
+        "<div class=\"card-body\">"
+        "<h4 class=\"card-title\">Interactive Map &mdash; Sessions by County (Choropleth)</h4>"
         "<div id=\"gbCountyMap_" + pid + "\" class=\"gb-map\"></div>"
-        "<div class=\"map-legend\" id=\"countyLegend_" + pid + "\"></div>"
+        "<div class=\"map-legend mt-3\" id=\"countyLegend_" + pid + "\"></div>"
+        "</div></div>"
+
+        "<div class=\"row mb-4\">"
+        "<div class=\"col-lg-6\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Sessions by Region</h4>"
+        "<canvas id=\"regChart_" + pid + "\" height=\"160\"></canvas>"
+        "</div></div></div>"
+        "<div class=\"col-lg-6\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Top 20 Cities</h4>"
+        "<canvas id=\"cityChart_" + pid + "\" height=\"160\"></canvas>"
+        "</div></div></div>"
         "</div>"
-        "<div class=\"grid grid-2\">"
-        "<div class=\"card\"><h2>Sessions by Region</h2><canvas id=\"regChart_" + pid + "\" height=\"160\"></canvas></div>"
-        "<div class=\"card\"><h2>Top 20 Cities</h2><canvas id=\"cityChart_" + pid + "\" height=\"160\"></canvas></div>"
-        "</div>"
-        "<div class=\"card full\"><h2>Sessions by County (Top 30)</h2><canvas id=\"countyChart_" + pid + "\" height=\"200\"></canvas></div>"
-        "<div class=\"card full\"><h2>UK Regions</h2>"
-        "<table><thead><tr><th>Region</th><th>Sessions</th><th>Users</th><th>Avg Duration</th><th>Bounce Rate</th></tr></thead>"
+
+        "<div class=\"card mb-4\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Sessions by County (Top 30)</h4>"
+        "<canvas id=\"countyChart_" + pid + "\" height=\"200\"></canvas>"
+        "</div></div>"
+
+        "<div class=\"card mb-4\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">UK Regions</h4>"
+        "<div class=\"table-responsive\">"
+        "<table class=\"table table-hover mb-0\"><thead><tr><th>Region</th><th>Sessions</th><th>Users</th><th>Avg Duration</th><th>Bounce Rate</th></tr></thead>"
         "<tbody>" + loc["region_table"] + "</tbody></table></div>"
-        "<div class=\"card full\"><h2>Cities (Top 50)</h2>"
-        "<table><thead><tr><th>City</th><th>Sessions</th><th>Users</th><th>Avg Duration</th><th>Bounce Rate</th></tr></thead>"
+        "</div></div>"
+
+        "<div class=\"card mb-4\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Cities (Top 50)</h4>"
+        "<div class=\"table-responsive\">"
+        "<table class=\"table table-hover mb-0\"><thead><tr><th>City</th><th>Sessions</th><th>Users</th><th>Avg Duration</th><th>Bounce Rate</th></tr></thead>"
         "<tbody>" + loc["city_table"] + "</tbody></table></div>"
-        "<div class=\"card full\"><h2>City + Region (Top 100)</h2>"
-        "<table><thead><tr><th>City</th><th>Region</th><th>Sessions</th><th>Users</th><th>Avg Duration</th></tr></thead>"
+        "</div></div>"
+
+        "<div class=\"card mb-4\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">City + Region (Top 100)</h4>"
+        "<div class=\"table-responsive\">"
+        "<table class=\"table table-hover mb-0\"><thead><tr><th>City</th><th>Region</th><th>Sessions</th><th>Users</th><th>Avg Duration</th></tr></thead>"
         "<tbody>" + loc["city_region_table"] + "</tbody></table></div>"
-        "<div class=\"card full\"><h2>Sessions by County</h2>"
-        "<table><thead><tr><th>County / Area</th><th>Sessions</th></tr></thead>"
+        "</div></div>"
+
+        "<div class=\"card mb-4\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Sessions by County</h4>"
+        "<div class=\"table-responsive\">"
+        "<table class=\"table table-hover mb-0\"><thead><tr><th>County / Area</th><th>Sessions</th></tr></thead>"
         "<tbody>" + loc["county_table"] + "</tbody></table></div>"
+        "</div></div>"
     )
 
 
 def panel_html(p, pid, active):
     cls = "panel active" if active else "panel"
-    age_html = "<canvas id=\"ageChart_" + pid + "\" height=\"160\"></canvas>" if p["has_age"] else "<p class='note'>Insufficient data — enable Google Signals in GA4.</p>"
-    gen_html = "<canvas id=\"genderChart_" + pid + "\" height=\"160\"></canvas>" if p["has_gen"] else "<p class='note'>Insufficient data — enable Google Signals in GA4.</p>"
+    age_html = "<canvas id=\"ageChart_" + pid + "\" height=\"160\"></canvas>" if p["has_age"] else "<p class=\"text-muted font-italic\">Insufficient data &mdash; enable Google Signals in GA4.</p>"
+    gen_html = "<canvas id=\"genderChart_" + pid + "\" height=\"160\"></canvas>" if p["has_gen"] else "<p class=\"text-muted font-italic\">Insufficient data &mdash; enable Google Signals in GA4.</p>"
     return (
         "<div class=\"" + cls + "\" id=\"panel_" + pid + "\">"
-        "<div class=\"stats\">"
-        "<div class=\"stat\"><div class=\"stat-label\">Total Sessions</div><div class=\"stat-value\">" + p["total_sessions"] + "</div></div>"
-        "<div class=\"stat\"><div class=\"stat-label\">Active Users</div><div class=\"stat-value\">" + p["total_users"] + "</div></div>"
-        "<div class=\"stat\"><div class=\"stat-label\">Avg Session Duration</div><div class=\"stat-value\">" + p["avg_duration"] + "</div></div>"
-        "<div class=\"stat\"><div class=\"stat-label\">Top Country</div><div class=\"stat-value sm\">" + p["top_country"] + "</div><div class=\"stat-sub\">" + p["top_country_s"] + " sessions</div></div>"
-        "<div class=\"stat\"><div class=\"stat-label\">Top Channel</div><div class=\"stat-value sm\">" + p["top_channel"] + "</div><div class=\"stat-sub\">" + p["top_channel_s"] + " sessions</div></div>"
-        "<div class=\"stat\"><div class=\"stat-label\">Top Device</div><div class=\"stat-value sm\">" + p["top_device"] + "</div><div class=\"stat-sub\">" + p["top_device_s"] + " sessions</div></div>"
+
+        # KPI stat cards
+        "<div class=\"card-group mb-4\">"
+        "<div class=\"card border-right\">"
+        "<div class=\"card-body\">"
+        "<div class=\"d-flex align-items-center\">"
+        "<div>"
+        "<h2 class=\"text-dark mb-1 font-weight-medium\">" + p["total_sessions"] + "</h2>"
+        "<h6 class=\"text-muted font-weight-normal mb-0\">Total Sessions</h6>"
         "</div>"
-        "<div class=\"card full\"><h2>Sessions &amp; Users Over Time</h2><canvas id=\"trendChart_" + pid + "\" height=\"70\"></canvas></div>"
-        "<div class=\"grid grid-wide\">"
-        "<div class=\"card\"><h2>Sessions by Country</h2><canvas id=\"geoChart_" + pid + "\" height=\"120\"></canvas></div>"
-        "<div class=\"card\"><h2>Traffic Channels</h2><canvas id=\"channelChart_" + pid + "\" height=\"120\"></canvas></div>"
+        "<div class=\"ml-auto\"><span class=\"opacity-7 text-muted\"><i data-feather=\"bar-chart-2\" class=\"stat-icon\"></i></span></div>"
+        "</div></div></div>"
+
+        "<div class=\"card border-right\">"
+        "<div class=\"card-body\">"
+        "<div class=\"d-flex align-items-center\">"
+        "<div>"
+        "<h2 class=\"text-dark mb-1 font-weight-medium\">" + p["total_users"] + "</h2>"
+        "<h6 class=\"text-muted font-weight-normal mb-0\">Active Users</h6>"
         "</div>"
-        "<div class=\"grid grid-3\">"
-        "<div class=\"card\"><h2>Device Type</h2><canvas id=\"deviceChart_" + pid + "\" height=\"180\"></canvas></div>"
-        "<div class=\"card\"><h2>Operating System</h2><canvas id=\"osChart_" + pid + "\" height=\"180\"></canvas></div>"
-        "<div class=\"card\"><h2>Browser</h2><canvas id=\"browserChart_" + pid + "\" height=\"180\"></canvas></div>"
+        "<div class=\"ml-auto\"><span class=\"opacity-7 text-muted\"><i data-feather=\"users\" class=\"stat-icon\"></i></span></div>"
+        "</div></div></div>"
+
+        "<div class=\"card border-right\">"
+        "<div class=\"card-body\">"
+        "<div class=\"d-flex align-items-center\">"
+        "<div>"
+        "<h2 class=\"text-dark mb-1 font-weight-medium\">" + p["avg_duration"] + "</h2>"
+        "<h6 class=\"text-muted font-weight-normal mb-0\">Avg Session Duration</h6>"
         "</div>"
-        "<div class=\"grid grid-2\">"
-        "<div class=\"card\"><h2>Age Bracket</h2>" + age_html + "</div>"
-        "<div class=\"card\"><h2>Gender</h2>" + gen_html + "</div>"
+        "<div class=\"ml-auto\"><span class=\"opacity-7 text-muted\"><i data-feather=\"clock\" class=\"stat-icon\"></i></span></div>"
+        "</div></div></div>"
+
+        "<div class=\"card border-right\">"
+        "<div class=\"card-body\">"
+        "<div class=\"d-flex align-items-center\">"
+        "<div>"
+        "<h2 class=\"text-dark mb-1 font-weight-medium kpi-sm\">" + p["top_country"] + "</h2>"
+        "<h6 class=\"text-muted font-weight-normal mb-0\">Top Country</h6>"
+        "<small class=\"text-muted\">" + p["top_country_s"] + " sessions</small>"
         "</div>"
-        "<div class=\"card full\"><h2>Channel Performance</h2>"
-        "<table><thead><tr><th>Channel</th><th>Sessions</th><th>Users</th><th>Bounce Rate</th><th>Avg Duration</th></tr></thead>"
+        "<div class=\"ml-auto\"><span class=\"opacity-7 text-muted\"><i data-feather=\"globe\" class=\"stat-icon\"></i></span></div>"
+        "</div></div></div>"
+
+        "<div class=\"card border-right\">"
+        "<div class=\"card-body\">"
+        "<div class=\"d-flex align-items-center\">"
+        "<div>"
+        "<h2 class=\"text-dark mb-1 font-weight-medium kpi-sm\">" + p["top_channel"] + "</h2>"
+        "<h6 class=\"text-muted font-weight-normal mb-0\">Top Channel</h6>"
+        "<small class=\"text-muted\">" + p["top_channel_s"] + " sessions</small>"
+        "</div>"
+        "<div class=\"ml-auto\"><span class=\"opacity-7 text-muted\"><i data-feather=\"trending-up\" class=\"stat-icon\"></i></span></div>"
+        "</div></div></div>"
+
+        "<div class=\"card\">"
+        "<div class=\"card-body\">"
+        "<div class=\"d-flex align-items-center\">"
+        "<div>"
+        "<h2 class=\"text-dark mb-1 font-weight-medium kpi-sm\">" + p["top_device"] + "</h2>"
+        "<h6 class=\"text-muted font-weight-normal mb-0\">Top Device</h6>"
+        "<small class=\"text-muted\">" + p["top_device_s"] + " sessions</small>"
+        "</div>"
+        "<div class=\"ml-auto\"><span class=\"opacity-7 text-muted\"><i data-feather=\"monitor\" class=\"stat-icon\"></i></span></div>"
+        "</div></div></div>"
+        "</div>"  # end card-group
+
+        # Sessions & Users Over Time
+        "<div class=\"card mb-4\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Sessions &amp; Users Over Time</h4>"
+        "<canvas id=\"trendChart_" + pid + "\" height=\"70\"></canvas>"
+        "</div></div>"
+
+        # Sessions by Country + Traffic Channels
+        "<div class=\"row mb-4\">"
+        "<div class=\"col-lg-8\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Sessions by Country</h4>"
+        "<canvas id=\"geoChart_" + pid + "\" height=\"120\"></canvas>"
+        "</div></div></div>"
+        "<div class=\"col-lg-4\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Traffic Channels</h4>"
+        "<canvas id=\"channelChart_" + pid + "\" height=\"120\"></canvas>"
+        "</div></div></div>"
+        "</div>"
+
+        # Device / OS / Browser
+        "<div class=\"row mb-4\">"
+        "<div class=\"col-lg-4\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Device Type</h4>"
+        "<canvas id=\"deviceChart_" + pid + "\" height=\"180\"></canvas>"
+        "</div></div></div>"
+        "<div class=\"col-lg-4\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Operating System</h4>"
+        "<canvas id=\"osChart_" + pid + "\" height=\"180\"></canvas>"
+        "</div></div></div>"
+        "<div class=\"col-lg-4\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Browser</h4>"
+        "<canvas id=\"browserChart_" + pid + "\" height=\"180\"></canvas>"
+        "</div></div></div>"
+        "</div>"
+
+        # Age + Gender
+        "<div class=\"row mb-4\">"
+        "<div class=\"col-lg-6\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Age Bracket</h4>" + age_html +
+        "</div></div></div>"
+        "<div class=\"col-lg-6\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Gender</h4>" + gen_html +
+        "</div></div></div>"
+        "</div>"
+
+        # Channel Performance table
+        "<div class=\"card mb-4\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Channel Performance</h4>"
+        "<div class=\"table-responsive\">"
+        "<table class=\"table table-hover mb-0\"><thead><tr><th>Channel</th><th>Sessions</th><th>Users</th><th>Bounce Rate</th><th>Avg Duration</th></tr></thead>"
         "<tbody>" + p["ch_table"] + "</tbody></table></div>"
-        "<div class=\"grid grid-2\">"
-        "<div class=\"card\"><h2>Traffic Sources</h2>"
-        "<table><thead><tr><th>Source</th><th>Medium</th><th>Sessions</th><th>Users</th></tr></thead>"
+        "</div></div>"
+
+        # Traffic Sources + Landing Pages
+        "<div class=\"row mb-4\">"
+        "<div class=\"col-lg-6\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Traffic Sources</h4>"
+        "<div class=\"table-responsive\">"
+        "<table class=\"table table-hover mb-0\"><thead><tr><th>Source</th><th>Medium</th><th>Sessions</th><th>Users</th></tr></thead>"
         "<tbody>" + p["src_table"] + "</tbody></table></div>"
-        "<div class=\"card\"><h2>Top Landing Pages</h2>"
-        "<table><thead><tr><th>Page</th><th>Sessions</th><th>Bounce</th><th>Duration</th></tr></thead>"
+        "</div></div></div>"
+        "<div class=\"col-lg-6\">"
+        "<div class=\"card h-100\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Top Landing Pages</h4>"
+        "<div class=\"table-responsive\">"
+        "<table class=\"table table-hover mb-0\"><thead><tr><th>Page</th><th>Sessions</th><th>Bounce</th><th>Duration</th></tr></thead>"
         "<tbody>" + p["lp_table"] + "</tbody></table></div>"
+        "</div></div></div>"
         "</div>"
-        "<div class=\"card full\"><h2>Site Search Terms</h2>" + p["st_html"] + "</div>"
+
+        # Site Search Terms
+        "<div class=\"card mb-4\"><div class=\"card-body\">"
+        "<h4 class=\"card-title\">Site Search Terms</h4>" + p["st_html"] +
+        "</div></div>"
+
         + gb_location_html(p, pid) +
-        "</div>"
+        "</div>"  # end panel
     )
 
 
@@ -639,107 +787,162 @@ def init_js(pid):
 
 
 html = """<!DOCTYPE html>
-<html lang="en">
+<html dir="ltr" lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GA4 Dashboard — food-mag.co.uk</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GA4 Dashboard &mdash; food-mag.co.uk</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f9fafb;color:#111827;min-height:100vh}
-  .header{background:#fff;border-bottom:1px solid #e5e7eb;padding:24px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-  .header h1{font-size:20px;font-weight:700;color:#111827}
-  .header p{color:#6b7280;font-size:13px;margin-top:2px}
-  .top-tabs{display:flex;gap:6px}
-  .top-tab{padding:8px 22px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s}
-  .top-tab.active{background:#111827;color:#fff;border-color:#111827}
-  .top-tab:hover:not(.active){background:#f3f4f6;color:#111827}
-  .sub-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:12px 40px;display:flex;gap:6px}
-  .sub-tab{padding:6px 16px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s}
-  .sub-tab.active{background:#4f46e5;color:#fff;border-color:#4f46e5}
-  .sub-tab:hover:not(.active){background:#f3f4f6;color:#111827}
-  .section{display:none}.section.active{display:block}
-  .container{max-width:1400px;margin:0 auto;padding:28px 40px}
-  .panel{display:none}.panel.active{display:block}
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
-  .stat{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:18px}
-  .stat-label{font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
-  .stat-value{font-size:28px;font-weight:700;color:#111827;margin-top:4px;line-height:1}
-  .stat-value.sm{font-size:17px;margin-top:6px}
-  .stat-sub{font-size:12px;color:#9ca3af;margin-top:4px}
-  .grid{display:grid;gap:16px;margin-bottom:16px}
-  .grid-2{grid-template-columns:1fr 1fr}
-  .grid-3{grid-template-columns:1fr 1fr 1fr}
-  .grid-wide{grid-template-columns:2fr 1fr}
-  .card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:22px}
-  .card.full{margin-bottom:16px}
-  h2{font-size:11px;font-weight:600;color:#9ca3af;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.06em}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;padding:7px 10px;color:#9ca3af;font-weight:500;border-bottom:1px solid #f3f4f6;font-size:11px;text-transform:uppercase;letter-spacing:0.04em}
-  td{padding:9px 10px;border-bottom:1px solid #f9fafb;color:#374151}
-  tr:last-child td{border-bottom:none}
-  tr:hover td{background:#fafafa}
-  .truncate{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
-  .badge-direct{background:#eff6ff;color:#2563eb}
-  .badge-organicsearch{background:#f0fdf4;color:#16a34a}
-  .badge-referral{background:#faf5ff;color:#7c3aed}
-  .badge-email{background:#fffbeb;color:#d97706}
-  .badge-paidsearch{background:#fef2f2;color:#dc2626}
-  .badge-organicsocial{background:#f0f9ff;color:#0284c7}
-  .badge-unassigned{background:#f9fafb;color:#9ca3af}
-  .note{font-size:12px;color:#9ca3af;font-style:italic}
-  .section-divider{display:flex;align-items:center;gap:12px;margin:28px 0 16px;color:#6b7280;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
-  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:#e5e7eb}
-  .gb-map{height:580px;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb}
-  .map-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;font-size:12px;color:#6b7280;align-items:center}
-  .map-legend-item{display:flex;align-items:center;gap:6px}
-  .map-legend-dot{border-radius:50%;display:inline-block}
-  .county-tip{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:6px 10px;font-size:12px;color:#374151;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
-  .leaflet-popup-content-wrapper{border-radius:8px!important;box-shadow:0 4px 16px rgba(0,0,0,0.12)!important;border:1px solid #e5e7eb!important}
-  .leaflet-popup-content{margin:12px 16px!important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;font-size:13px!important}
-  .map-popup-title{font-weight:700;font-size:14px;color:#111827;margin-bottom:8px}
-  .map-popup-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
-  .map-popup-label{color:#9ca3af;font-size:11px;text-transform:uppercase;letter-spacing:0.04em}
-  .map-popup-val{color:#111827;font-weight:600}
-  @media(max-width:900px){.grid-2,.grid-3,.grid-wide{grid-template-columns:1fr}.container{padding:16px}.header{padding:16px 20px}.sub-bar{padding:10px 16px}}
+  /* ===== Base ===== */
+  body { font-family: 'Rubik', sans-serif; background: #f4f6f9; color: #455a64; }
+
+  /* ===== Topbar ===== */
+  .topbar { height: 64px; background: #fff; border-bottom: 1px solid #e9ecef; position: fixed; top: 0; left: 0; right: 0; z-index: 1030; display: flex; align-items: center; padding: 0 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .topbar .logo-text { font-size: 17px; font-weight: 700; color: #455a64; margin-right: 8px; }
+  .topbar .logo-sub  { font-size: 13px; color: #9aabbe; }
+  .topbar .gen-date  { margin-left: auto; font-size: 12px; color: #9aabbe; }
+
+  /* ===== Sidebar ===== */
+  .left-sidebar { position: fixed; top: 64px; left: 0; bottom: 0; width: 260px; background: #fff; border-right: 1px solid #e9ecef; overflow-y: auto; z-index: 1020; }
+  .sidebar-nav { padding: 16px 0; }
+  .sidebar-nav .nav-small-cap { padding: 10px 20px 4px; font-size: 11px; font-weight: 600; color: #9aabbe; text-transform: uppercase; letter-spacing: 0.06em; }
+  .sidebar-nav .sidebar-item { list-style: none; }
+  .sidebar-nav .sidebar-link { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 14px; color: #455a64; cursor: pointer; transition: background 0.15s, color 0.15s; border-left: 3px solid transparent; text-decoration: none; background: none; border-top: none; border-right: none; border-bottom: none; width: 100%; text-align: left; }
+  .sidebar-nav .sidebar-link:hover { background: #f4f6f9; color: #5f76e8; }
+  .sidebar-nav .sidebar-link.active { background: #eef1fd; color: #5f76e8; border-left-color: #5f76e8; font-weight: 500; }
+  .sidebar-nav .sidebar-link .feather-icon { width: 16px; height: 16px; flex-shrink: 0; }
+  .sidebar-nav .has-arrow::after { content: '\\203A'; margin-left: auto; font-size: 16px; color: #9aabbe; transition: transform 0.2s; }
+  .sidebar-nav .has-arrow[aria-expanded="true"]::after { transform: rotate(90deg); }
+  .sidebar-nav .first-level { padding: 0; margin: 0; }
+  .sidebar-nav .first-level .sidebar-item .sidebar-link { padding-left: 46px; font-size: 13px; }
+  .sidebar-nav .list-divider { height: 1px; background: #e9ecef; margin: 8px 0; list-style: none; }
+
+  /* ===== Page wrapper ===== */
+  .page-wrapper { margin-left: 260px; margin-top: 64px; min-height: calc(100vh - 64px); }
+  .page-breadcrumb { padding: 16px 24px 0; }
+  .page-breadcrumb .page-title { font-size: 18px; font-weight: 500; color: #455a64; margin-bottom: 2px; }
+  .container-fluid { padding: 20px 24px 40px; }
+
+  /* ===== Panels ===== */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ===== Cards ===== */
+  .card { border: 1px solid #e9ecef; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .card-title { font-size: 11px; font-weight: 600; color: #9aabbe; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px; }
+  .card-group .card { border-radius: 8px; }
+
+  /* ===== KPI stat icons ===== */
+  .stat-icon { width: 28px; height: 28px; color: #9aabbe; }
+  .kpi-sm { font-size: 20px !important; }
+
+  /* ===== Tables ===== */
+  .table thead th { font-size: 11px; font-weight: 600; color: #9aabbe; text-transform: uppercase; letter-spacing: 0.04em; border-top: none; border-bottom: 1px solid #e9ecef; padding: 8px 12px; }
+  .table tbody td { font-size: 13px; color: #455a64; padding: 9px 12px; border-top: 1px solid #f4f6f9; vertical-align: middle; }
+  .table-hover tbody tr:hover td { background: #f8f9fc; }
+  .truncate { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ===== Channel badges ===== */
+  .badge-direct       { background: #eff6ff; color: #2563eb; }
+  .badge-organicsearch { background: #f0fdf4; color: #16a34a; }
+  .badge-referral     { background: #faf5ff; color: #7c3aed; }
+  .badge-email        { background: #fffbeb; color: #d97706; }
+  .badge-paidsearch   { background: #fef2f2; color: #dc2626; }
+  .badge-organicsocial { background: #f0f9ff; color: #0284c7; }
+  .badge-unassigned   { background: #f9fafb; color: #9aabbe; }
+
+  /* ===== Maps ===== */
+  .gb-map { height: 500px; border-radius: 6px; overflow: hidden; }
+  .map-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #6b7280; align-items: center; }
+  .map-legend-item { display: flex; align-items: center; gap: 6px; }
+  .map-legend-dot { border-radius: 50%; display: inline-block; }
+  .county-tip { background: #fff; border: 1px solid #e9ecef; border-radius: 6px; padding: 6px 10px; font-size: 12px; color: #455a64; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .leaflet-popup-content-wrapper { border-radius: 8px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important; border: 1px solid #e9ecef !important; }
+  .leaflet-popup-content { margin: 12px 16px !important; font-family: 'Rubik', sans-serif !important; font-size: 13px !important; }
+  .map-popup-title { font-weight: 700; font-size: 14px; color: #455a64; margin-bottom: 8px; }
+  .map-popup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
+  .map-popup-label { color: #9aabbe; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .map-popup-val { color: #455a64; font-weight: 600; }
+
+  /* ===== Misc ===== */
+  .note { font-size: 12px; color: #9aabbe; font-style: italic; }
+  @media (max-width: 992px) {
+    .left-sidebar { transform: translateX(-260px); }
+    .page-wrapper { margin-left: 0; }
+  }
 </style>
 </head>
 <body>
-<div class="header">
-  <div>
-    <h1>food-mag.co.uk — Analytics</h1>
-    <p>Generated """ + raw["generated"] + """</p>
-  </div>
-  <div class="top-tabs">
-    <button class="top-tab active" onclick="switchSection('ww',this)">Worldwide</button>
-    <button class="top-tab" onclick="switchSection('gb',this)">GB Only</button>
+
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+
+  <!-- ===== Topbar ===== -->
+  <header class="topbar" data-navbarbg="skin6">
+    <span class="logo-text">food-mag.co.uk</span>
+    <span class="logo-sub">Analytics Dashboard</span>
+    <span class="gen-date">Generated """ + raw["generated"] + """</span>
+  </header>
+
+  <!-- ===== Left Sidebar ===== -->
+  <aside class="left-sidebar" data-sidebarbg="skin6">
+    <nav class="sidebar-nav">
+      <ul id="sidebarnav" class="p-0 m-0">
+        <li class="list-divider"></li>
+        <li class="nav-small-cap"><span>Worldwide</span></li>
+        <li class="sidebar-item">
+          <button class="sidebar-link active" id="nav_ww_6m" onclick="showPanel('ww_6m')">
+            <i data-feather="bar-chart-2" class="feather-icon"></i><span>Last 6 Months</span>
+          </button>
+        </li>
+        <li class="sidebar-item">
+          <button class="sidebar-link" id="nav_ww_12m" onclick="showPanel('ww_12m')">
+            <i data-feather="bar-chart-2" class="feather-icon"></i><span>Last 12 Months</span>
+          </button>
+        </li>
+        <li class="list-divider"></li>
+        <li class="nav-small-cap"><span>GB Analytics</span></li>
+        <li class="sidebar-item">
+          <button class="sidebar-link" id="nav_gb_6m" onclick="showPanel('gb_6m')">
+            <i data-feather="map" class="feather-icon"></i><span>Last 6 Months</span>
+          </button>
+        </li>
+        <li class="sidebar-item">
+          <button class="sidebar-link" id="nav_gb_12m" onclick="showPanel('gb_12m')">
+            <i data-feather="map" class="feather-icon"></i><span>Last 12 Months</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ===== Page Wrapper ===== -->
+  <div class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <div class="page-breadcrumb">
+      <div class="row">
+        <div class="col-12 align-self-center">
+          <h3 class="page-title" id="breadcrumb-title">Worldwide &mdash; Last 6 Months</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="container-fluid">
+""" + panel_html(p_ww6, "ww_6m", True) + panel_html(p_ww12, "ww_12m", False) + panel_html(p_gb6, "gb_6m", False) + panel_html(p_gb12, "gb_12m", False) + """
+    </div>
   </div>
 </div>
 
-<div class="section active" id="section_ww">
-  <div class="sub-bar">
-    <button class="sub-tab active" onclick="switchPanel('ww_6m',this,'ww')">Last 6 Months</button>
-    <button class="sub-tab" onclick="switchPanel('ww_12m',this,'ww')">Last 12 Months</button>
-  </div>
-  <div class="container">
-""" + panel_html(p_ww6, "ww_6m", True) + panel_html(p_ww12, "ww_12m", False) + """
-  </div>
-</div>
-
-<div class="section" id="section_gb">
-  <div class="sub-bar">
-    <button class="sub-tab active" onclick="switchPanel('gb_6m',this,'gb')">Last 6 Months</button>
-    <button class="sub-tab" onclick="switchPanel('gb_12m',this,'gb')">Last 12 Months</button>
-  </div>
-  <div class="container">
-""" + panel_html(p_gb6, "gb_6m", True) + panel_html(p_gb12, "gb_12m", False) + """
-  </div>
-</div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const COLORS = """ + json.dumps(COLORS) + """;
 const LAD_TO_COUNTY = """ + json.dumps(LAD_TO_COUNTY) + """;
@@ -753,25 +956,6 @@ function initww_6m() {""" + init_js("ww_6m") + """}
 function initww_12m() {""" + init_js("ww_12m") + """}
 function initgb_6m() {""" + init_js("gb_6m") + """}
 function initgb_12m() {""" + init_js("gb_12m") + """}
-
-function switchSection(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('section_' + id).classList.add('active');
-  btn.classList.add('active');
-  if (id === 'gb') initgb_6m();
-}
-
-function switchPanel(id, btn, section) {
-  const sec = document.getElementById('section_' + section);
-  sec.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  btn.parentElement.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('panel_' + id).classList.add('active');
-  btn.classList.add('active');
-  window['init' + id]();
-}
-
-window.addEventListener('DOMContentLoaded', initww_6m);
 
 const _maps = {};
 function initGBMap(pid, cityData, countyData) {
@@ -787,7 +971,6 @@ function initGBMap(pid, cityData, countyData) {
     maxZoom:13
   }).addTo(map);
 
-  // Bubble markers sized by sessions
   const maxSessions = Math.max(...cityData.map(c => c.sessions));
   const breaks = [
     {min:0, label:'< 500', color:'#c7d2fe', r:5},
@@ -824,11 +1007,10 @@ function initGBMap(pid, cityData, countyData) {
     ).addTo(map);
   });
 
-  // Legend
   const leg = document.getElementById('legend_' + pid);
   if (leg) {
     leg.innerHTML =
-      '<span style="color:#374151;font-weight:600;margin-right:8px">Sessions by city:</span>' +
+      '<span style="color:#455a64;font-weight:600;margin-right:8px">Sessions by city:</span>' +
       breaks.map(b =>
         '<span class="map-legend-item"><span class="map-legend-dot" style="width:' + (b.r*2) + 'px;height:' + (b.r*2) + 'px;background:' + b.color + '"></span>' + b.label + '</span>'
       ).join('');
@@ -931,20 +1113,40 @@ function initCountyMap(pid, countyData) {
     }).catch(()=>{});
   });
 
-  // City labels overlay (no bubbles, just place name dots)
-
-  // Choropleth legend
   const leg = document.getElementById('countyLegend_' + pid);
   if (leg) {
-    leg.innerHTML = '<span style="color:#374151;font-weight:600;margin-right:8px">Sessions per county:</span>' +
+    leg.innerHTML = '<span style="color:#455a64;font-weight:600;margin-right:8px">Sessions per county:</span>' +
       breaks.map(b =>
         '<span class="map-legend-item"><span style="width:18px;height:12px;background:' + b.fill + ';border:1px solid rgba(99,102,241,0.3);border-radius:2px;display:inline-block"></span> ' + b.label + '</span>'
       ).join('') +
-      '<span class="map-legend-item"><span style="width:18px;height:12px;background:#f1f5f9;border:1px solid #e5e7eb;border-radius:2px;display:inline-block"></span> No data</span>';
+      '<span class="map-legend-item"><span style="width:18px;height:12px;background:#f1f5f9;border:1px solid #e9ecef;border-radius:2px;display:inline-block"></span> No data</span>';
   }
 
   setTimeout(() => map.invalidateSize(), 100);
 }
+
+// Sidebar nav
+function showPanel(pid) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('panel_' + pid);
+  if (el) el.classList.add('active');
+  // update breadcrumb
+  const titles = {ww_6m:'Worldwide — Last 6 Months', ww_12m:'Worldwide — Last 12 Months', gb_6m:'GB Analytics — Last 6 Months', gb_12m:'GB Analytics — Last 12 Months'};
+  document.getElementById('breadcrumb-title').textContent = titles[pid] || pid;
+  // update active nav link
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  const navEl = document.getElementById('nav_' + pid);
+  if (navEl) navEl.classList.add('active');
+  // lazy init charts/maps
+  const inits = {ww_6m:initww_6m, ww_12m:initww_12m, gb_6m:initgb_6m, gb_12m:initgb_12m};
+  if (inits[pid]) inits[pid]();
+}
+
+// Init feather icons
+feather.replace();
+
+// Show first panel on load
+document.addEventListener('DOMContentLoaded', function() { showPanel('ww_6m'); });
 </script>
 </body>
 </html>"""
