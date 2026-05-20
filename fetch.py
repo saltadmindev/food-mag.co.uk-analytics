@@ -6,6 +6,18 @@ from google.analytics.data_v1beta.types import (
     RunReportRequest, Dimension, Metric, DateRange, OrderBy,
     FilterExpression, Filter
 )
+
+# Exclude known bot-traffic countries (1–2s avg session duration in GA4 data)
+BOT_COUNTRY_FILTER = FilterExpression(
+    not_expression=FilterExpression(
+        filter=Filter(
+            field_name="country",
+            in_list_filter=Filter.InListFilter(
+                values=["Germany", "Norway", "China", "Singapore", "Bulgaria"]
+            )
+        )
+    )
+)
 from auth import get_credentials
 
 PROPERTY_ID = "275227762"
@@ -24,7 +36,7 @@ GB_FILTER = FilterExpression(
 )
 
 
-def fetch_range(date_range, engagement_limit, country_filter=None):
+def fetch_range(date_range, engagement_limit, dimension_filter=None, include_gb_detail=False):
     def report(dimensions, metrics, limit=25, order_metric=None):
         kwargs = dict(
             property=f"properties/{PROPERTY_ID}",
@@ -35,8 +47,8 @@ def fetch_range(date_range, engagement_limit, country_filter=None):
         )
         if order_metric:
             kwargs["order_bys"] = [OrderBy(metric=OrderBy.MetricOrderBy(metric_name=order_metric), desc=True)]
-        if country_filter:
-            kwargs["dimension_filter"] = country_filter
+        if dimension_filter:
+            kwargs["dimension_filter"] = dimension_filter
         try:
             resp = client.run_report(RunReportRequest(**kwargs))
             rows = []
@@ -62,24 +74,24 @@ def fetch_range(date_range, engagement_limit, country_filter=None):
         "search_terms":  report(["searchTerm"],                 ["sessions", "activeUsers"], order_metric="sessions"),
         "engagement":    report(["date"],                       ["activeUsers", "sessions", "averageSessionDuration", "engagementRate"], limit=engagement_limit, order_metric="sessions"),
     }
-    if country_filter:
+    if include_gb_detail:
         base["gb_region"]    = report(["region"],               ["sessions", "activeUsers", "averageSessionDuration", "bounceRate"], limit=50, order_metric="sessions")
         base["gb_city"]      = report(["city"],                 ["sessions", "activeUsers", "averageSessionDuration", "bounceRate"], limit=100, order_metric="sessions")
         base["gb_city_region"] = report(["city", "region"],     ["sessions", "activeUsers", "averageSessionDuration"], limit=100, order_metric="sessions")
     return base
 
 
-print("Fetching worldwide 6-month...")
-ww_6m = fetch_range("180daysAgo", 180)
+print("Fetching worldwide 6-month (excluding bot countries)...")
+ww_6m = fetch_range("180daysAgo", 180, dimension_filter=BOT_COUNTRY_FILTER)
 
-print("Fetching worldwide 12-month...")
-ww_12m = fetch_range("365daysAgo", 365)
+print("Fetching worldwide 12-month (excluding bot countries)...")
+ww_12m = fetch_range("365daysAgo", 365, dimension_filter=BOT_COUNTRY_FILTER)
 
 print("Fetching GB 6-month...")
-gb_6m = fetch_range("180daysAgo", 180, GB_FILTER)
+gb_6m = fetch_range("180daysAgo", 180, dimension_filter=GB_FILTER, include_gb_detail=True)
 
 print("Fetching GB 12-month...")
-gb_12m = fetch_range("365daysAgo", 365, GB_FILTER)
+gb_12m = fetch_range("365daysAgo", 365, dimension_filter=GB_FILTER, include_gb_detail=True)
 
 data = {
     "generated": datetime.now().strftime("%d %B %Y, %H:%M"),
